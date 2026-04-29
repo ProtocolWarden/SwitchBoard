@@ -59,3 +59,37 @@ def test_route_persists_canonical_lane_backend_evidence(tmp_path, monkeypatch) -
     assert "selected_profile" not in record
     assert "downstream_model" not in record
     load_settings.cache_clear()
+
+
+def test_wire_response_and_audit_log_agree_on_lane_backend(tmp_path, monkeypatch) -> None:
+    """Defense against mapper drift: the CxRP envelope returned on the
+    wire and the JSONL audit-log entry must name the same executor and
+    backend, even though they use different field names internally
+    (response.executor / response.backend vs. record.selected_lane /
+    record.selected_backend)."""
+    decision_log = tmp_path / "decisions.jsonl"
+    monkeypatch.setenv("SWITCHBOARD_DECISION_LOG_PATH", str(decision_log))
+    load_settings.cache_clear()
+
+    with TestClient(create_app()) as client:
+        response = client.post("/route", json=_proposal(), headers={"X-Request-ID": "req-2"})
+
+    assert response.status_code == 200
+    wire = response.json()
+    assert wire["contract_kind"] == "lane_decision"
+    assert wire["schema_version"].startswith("0.")
+
+    entries = [json.loads(line) for line in decision_log.read_text(encoding="utf-8").splitlines()]
+    assert entries, "decision logger must persist at least one record"
+    record = entries[-1]
+
+    assert wire["executor"] == record["selected_lane"], (
+        f"wire executor ({wire['executor']!r}) and audit-log selected_lane "
+        f"({record['selected_lane']!r}) disagree — mapper drift?"
+    )
+    assert wire["backend"] == record["selected_backend"], (
+        f"wire backend ({wire['backend']!r}) and audit-log selected_backend "
+        f"({record['selected_backend']!r}) disagree — mapper drift?"
+    )
+    assert wire["proposal_id"] == record["context_summary"]["proposal_id"]
+    load_settings.cache_clear()

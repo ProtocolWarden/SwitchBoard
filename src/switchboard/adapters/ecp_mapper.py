@@ -16,9 +16,9 @@ from __future__ import annotations
 from dataclasses import asdict
 from typing import Any
 
-from ecp.contracts import LaneAlternative
-from ecp.contracts import LaneDecision as EcpLaneDecision
-from ecp.vocabulary.lane import LaneType
+from cxrp.contracts import LaneAlternative
+from cxrp.contracts import LaneDecision as EcpLaneDecision
+from cxrp.vocabulary.lane import LaneType
 from operations_center.contracts import LaneDecision as OcLaneDecision
 
 _OC_LANE_TO_ECP_CATEGORY: dict[str, LaneType] = {

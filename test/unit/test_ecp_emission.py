@@ -11,9 +11,9 @@ from dataclasses import asdict
 from pathlib import Path
 
 import pytest
-from ecp.contracts import LaneDecision as EcpLaneDecision
-from ecp.validation.json_schema import validate_contract
-from ecp.vocabulary.lane import LaneType
+from cxrp.contracts import LaneDecision as EcpLaneDecision
+from cxrp.validation.json_schema import validate_contract
+from cxrp.vocabulary.lane import LaneType
 from operations_center.contracts import LaneDecision as OcLaneDecision
 from operations_center.contracts.enums import BackendName, LaneName
 
