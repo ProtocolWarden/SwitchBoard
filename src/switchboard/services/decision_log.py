@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+# Copyright (C) 2026 Velascat
 """Re-export shim for canonical decision logging."""
 
 from switchboard.services.decision_logger import DecisionLogger

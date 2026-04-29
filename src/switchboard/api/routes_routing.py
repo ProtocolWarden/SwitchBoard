@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+# Copyright (C) 2026 Velascat
 """Canonical routing endpoints for selector-only SwitchBoard.
 
 The ``/route`` endpoint emits the CxRP v0.2 ``LaneDecision`` envelope on

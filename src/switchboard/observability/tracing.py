@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+# Copyright (C) 2026 Velascat
 """Distributed tracing stubs for SwitchBoard.
 
 Currently a no-op shim.  The API is compatible with OpenTelemetry so that a

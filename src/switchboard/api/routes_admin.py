@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+# Copyright (C) 2026 Velascat
 """Admin / observability endpoints.
 
 GET  /admin/decisions/recent?n=20        — last N decisions (enriched)

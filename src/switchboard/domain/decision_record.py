@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+# Copyright (C) 2026 Velascat
 """DecisionRecord — persisted audit entry written to the decision log.
 
 Section 8.3

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+# Copyright (C) 2026 Velascat
 """CapabilityModel — describes what a downstream model can do.
 
 Section 8.4

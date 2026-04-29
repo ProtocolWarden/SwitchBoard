@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+# Copyright (C) 2026 Velascat
 """Metrics stubs for SwitchBoard.
 
 This module defines simple in-process counters that can be exposed via a
