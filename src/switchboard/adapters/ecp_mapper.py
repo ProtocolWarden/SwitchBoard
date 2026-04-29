@@ -15,7 +15,8 @@ from __future__ import annotations
 
 from typing import Any
 
-from ecp.contracts import LaneAlternative, LaneDecision as EcpLaneDecision
+from ecp.contracts import LaneAlternative
+from ecp.contracts import LaneDecision as EcpLaneDecision
 from ecp.vocabulary.lane import LaneType
 from operations_center.contracts import LaneDecision as OcLaneDecision
 
