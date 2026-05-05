@@ -21,6 +21,7 @@ from switchboard.adapters.cxrp_mapper import (
     to_cxrp_lane_decision,
 )
 from switchboard.domain.decision_record import DecisionRecord
+from switchboard.lane.catalog_advisor import advise as catalog_advise
 from switchboard.lane.routing import RoutingPlan
 
 router = APIRouter(tags=["routing"])
@@ -35,7 +36,21 @@ async def route_task(
     selector = request.app.state.selector
     decision = selector.select(proposal)
     _record_decision(request, proposal, decision, x_request_id=x_request_id)
-    return serialize_cxrp_lane_decision(to_cxrp_lane_decision(decision))
+
+    payload = serialize_cxrp_lane_decision(to_cxrp_lane_decision(decision))
+
+    # Catalog advisory layer — surfaces fork_required / unsupported runtime
+    # / missing capability concerns under metadata.catalog_advisories.
+    # Non-mutating: callers decide what to do with BLOCK-level advisories.
+    catalog = getattr(request.app.state, "executor_catalog", None)
+    if catalog is not None:
+        advisories = catalog_advise(catalog=catalog, decision=decision)
+        if advisories:
+            payload.setdefault("metadata", {})["catalog_advisories"] = [
+                {"level": a.level.value, "code": a.code, "message": a.message}
+                for a in advisories
+            ]
+    return payload
 
 
 @router.post("/route-plan", response_model=RoutingPlan, summary="Return primary, fallback, and escalation routes")
