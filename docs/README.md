@@ -7,7 +7,6 @@ detail, runtime behaviour, and historical migration notes.
 ## Get started
 
 - [quickstart.md](quickstart.md) — Install, configure, start, smoke-test.
-- [index.md](index.md) — Doc-set landing page (legacy; kept for inbound links).
 
 ## Architecture
 
@@ -37,7 +36,7 @@ detail, runtime behaviour, and historical migration notes.
 
 - [roadmap.md](roadmap.md) — Planned work, out-of-scope items.
 
-## Migration
+## History
 
-- [migration/switchboard-selector-cutover.md](migration/switchboard-selector-cutover.md) —
+- [history/switchboard-selector-cutover.md](history/switchboard-selector-cutover.md) —
   Selector-cutover historical notes.
