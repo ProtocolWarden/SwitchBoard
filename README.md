@@ -20,7 +20,9 @@ Execution lane
 ```
 
 SwitchBoard decides **how** a task runs. It does not decide **what** to work on
-(that is OperationsCenter's job) and it does not perform the coding (that is kodo's job).
+(that is OperationsCenter's job) and it does not perform the coding (that is the
+backend's job — kodo, archon, openclaw, aider_local, etc., dispatched through
+ExecutorRuntime).
 
 ---
 
