@@ -77,3 +77,30 @@ extend-select = [
     "N818",                                              # N1  — exception class naming
 ]
 ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+# Tests use assert, vanilla exceptions, broad except in fixtures, etc.
+"test/**/*.py" = [
+    "S101", "S110", "S602", "S603",
+    "BLE001",
+    "DTZ001", "DTZ003", "DTZ005", "DTZ006", "DTZ007",
+    "B006", "B028",
+    "PLC1802",
+    "TRY002", "TRY203",
+    "PGH003",
+    "RET503",
+    "G004",
+    "T201",
+]
+"tests/**/*.py" = [
+    "S101", "S110", "S602", "S603",
+    "BLE001",
+    "DTZ001", "DTZ003", "DTZ005", "DTZ006", "DTZ007",
+    "B006", "B028",
+    "PLC1802",
+    "TRY002", "TRY203",
+    "PGH003",
+    "RET503",
+    "G004",
+    "T201",
+]

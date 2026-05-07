@@ -15,15 +15,16 @@ endpoint, audit) decides whether to surface, log, or override.
 """
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass
-from enum import Enum
-from typing import Iterable, Optional
+from enum import StrEnum
 
 from operations_center.contracts import LaneDecision
+
 from switchboard.ports.executor_catalog import ExecutorCatalog
 
 
-class AdvisoryLevel(str, Enum):
+class AdvisoryLevel(StrEnum):
     INFO = "info"
     WARN = "warn"
     BLOCK = "block"
@@ -41,7 +42,7 @@ def advise(
     catalog: ExecutorCatalog,
     decision: LaneDecision,
     required_capabilities: Iterable[str] | None = None,
-    requested_runtime_kind: Optional[str] = None,
+    requested_runtime_kind: str | None = None,
 ) -> list[CatalogAdvisory]:
     """Return a list of advisories for this decision against the catalog.
 

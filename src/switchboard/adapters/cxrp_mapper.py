@@ -54,7 +54,8 @@ def to_cxrp_lane_decision(
 
     # Schema 0.3 — backend/executor are typed CxRP enums on the wire.
     # Convert OC's same-valued enums by .value lookup.
-    from cxrp.contracts import BackendName as CxrpBackendName, ExecutorName as CxrpExecutorName
+    from cxrp.contracts import BackendName as CxrpBackendName
+    from cxrp.contracts import ExecutorName as CxrpExecutorName
     from cxrp.contracts.execution_target import ExecutionTargetEnvelope
     cxrp_lane = _category_for(oc_decision.selected_lane.value)
     cxrp_executor = CxrpExecutorName(oc_decision.selected_lane.value)

@@ -3,13 +3,13 @@
 """CatalogAdvisor tests — non-mutating advisory layer over LaneDecision."""
 from __future__ import annotations
 
-from typing import Iterable
+from collections.abc import Iterable
 
 from operations_center.contracts import LaneDecision
 from operations_center.contracts.enums import BackendName, LaneName
+
 from switchboard.lane.catalog_advisor import (
     AdvisoryLevel,
-    CatalogAdvisory,
     advise,
 )
 

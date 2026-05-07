@@ -11,7 +11,8 @@ OperationsCenter docs/architecture/backend_control_audit.md Phase 10).
 """
 from __future__ import annotations
 
-from typing import Iterable, Protocol, runtime_checkable
+from collections.abc import Iterable
+from typing import Protocol, runtime_checkable
 
 
 @runtime_checkable
