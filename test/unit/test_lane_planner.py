@@ -4,11 +4,11 @@
 
 from __future__ import annotations
 
-from operations_center.contracts import TaskProposal
-from operations_center.contracts.common import (
+from switchboard.contracts import TaskProposal
+from switchboard.contracts.common import (
     TaskTarget,
 )
-from operations_center.contracts.enums import ExecutionMode, Priority, RiskLevel, TaskType
+from switchboard.contracts.enums import ExecutionMode, Priority, RiskLevel, TaskType
 
 from switchboard.lane.planner import DecisionPlanner
 from switchboard.lane.policy import FallbackPolicy, LaneRoutingPolicy

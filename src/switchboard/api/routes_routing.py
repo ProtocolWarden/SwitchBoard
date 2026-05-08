@@ -14,7 +14,7 @@ from datetime import UTC, datetime
 from typing import Any
 
 from fastapi import APIRouter, Header, Request
-from operations_center.contracts import LaneDecision, TaskProposal
+from switchboard.contracts import LaneDecision, TaskProposal
 
 from switchboard.adapters.cxrp_mapper import (
     serialize_cxrp_lane_decision,

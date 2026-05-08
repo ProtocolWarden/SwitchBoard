@@ -25,8 +25,8 @@ import logging
 from collections.abc import Callable
 from typing import Any
 
-from operations_center.contracts import LaneDecision, TaskProposal
-from operations_center.contracts.enums import (
+from switchboard.contracts import LaneDecision, TaskProposal
+from switchboard.contracts.enums import (
     BackendName,
     ExecutionMode,
     LaneName,

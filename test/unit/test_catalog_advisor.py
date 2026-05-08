@@ -5,8 +5,8 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 
-from operations_center.contracts import LaneDecision
-from operations_center.contracts.enums import BackendName, LaneName
+from switchboard.contracts import LaneDecision
+from switchboard.contracts.enums import BackendName, LaneName
 
 from switchboard.lane.catalog_advisor import (
     AdvisoryLevel,

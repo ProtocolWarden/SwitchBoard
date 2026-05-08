@@ -1,10 +1,9 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 # Copyright (C) 2026 Velascat
-"""Map SwitchBoard's internal LaneDecision (rich, Pydantic) to CxRP's
-canonical LaneDecision envelope.
+"""Map SwitchBoard's internal LaneDecision to CxRP's canonical envelope.
 
-SwitchBoard's selector emits an `operations_center.contracts.LaneDecision`
-populated with OC's narrowed enums (LaneName, BackendName). CxRP defines the
+SwitchBoard's selector emits a `switchboard.contracts.LaneDecision`
+populated with SB-owned enums (LaneName, BackendName). CxRP defines the
 *envelope*: an abstract `lane: LaneType` category plus open-string `executor`
 and `backend` fields that consumers may narrow internally.
 
@@ -21,7 +20,7 @@ from typing import Any
 from cxrp.contracts import LaneAlternative
 from cxrp.contracts import LaneDecision as CxrpLaneDecision
 from cxrp.vocabulary.lane import LaneType
-from operations_center.contracts import LaneDecision as OcLaneDecision
+from switchboard.contracts import LaneDecision as SbLaneDecision
 
 _OC_LANE_TO_ECP_CATEGORY: dict[str, LaneType] = {
     "claude_cli": LaneType.CODING_AGENT,
@@ -35,7 +34,7 @@ def _category_for(oc_lane_value: str) -> LaneType:
 
 
 def to_cxrp_lane_decision(
-    oc_decision: OcLaneDecision,
+    oc_decision: SbLaneDecision,
     *,
     extra_metadata: dict[str, Any] | None = None,
 ) -> CxrpLaneDecision:

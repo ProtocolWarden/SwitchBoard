@@ -19,7 +19,7 @@ from collections.abc import Iterable
 from dataclasses import dataclass
 from enum import StrEnum
 
-from operations_center.contracts import LaneDecision
+from switchboard.contracts import LaneDecision
 
 from switchboard.ports.executor_catalog import ExecutorCatalog
 

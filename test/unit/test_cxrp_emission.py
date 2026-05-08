@@ -16,8 +16,8 @@ import pytest
 from cxrp.contracts import LaneDecision as CxrpLaneDecision
 from cxrp.validation.json_schema import validate_contract
 from cxrp.vocabulary.lane import LaneType
-from operations_center.contracts import LaneDecision as OcLaneDecision
-from operations_center.contracts.enums import BackendName, LaneName
+from switchboard.contracts import LaneDecision as SbLaneDecision
+from switchboard.contracts.enums import BackendName, LaneName
 
 from switchboard.adapters.cxrp_mapper import to_cxrp_lane_decision
 
@@ -34,8 +34,8 @@ def _serialize_for_schema(decision: CxrpLaneDecision) -> dict:
     return payload
 
 
-def _make_oc_decision() -> OcLaneDecision:
-    return OcLaneDecision(
+def _make_oc_decision() -> SbLaneDecision:
+    return SbLaneDecision(
         proposal_id="prop-001",
         selected_lane=LaneName.CLAUDE_CLI,
         selected_backend=BackendName.KODO,
@@ -93,7 +93,7 @@ def test_mapper_confidence_stays_within_bounds():
 def test_mapper_rejects_out_of_bounds_confidence():
     """Both OC's pydantic and CxRP's dataclass enforce 0 <= confidence <= 1."""
     with pytest.raises(ValueError):
-        OcLaneDecision(
+        SbLaneDecision(
             proposal_id="x",
             selected_lane=LaneName.CLAUDE_CLI,
             selected_backend=BackendName.KODO,

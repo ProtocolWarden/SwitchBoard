@@ -20,7 +20,7 @@ import logging
 from collections.abc import Callable
 from typing import Any
 
-from operations_center.contracts import TaskProposal
+from switchboard.contracts import TaskProposal
 
 from .defaults import DEFAULT_POLICY
 from .engine import LaneSelector, _proposal_attrs

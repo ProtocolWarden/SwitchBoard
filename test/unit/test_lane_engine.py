@@ -5,11 +5,11 @@
 from __future__ import annotations
 
 import pytest
-from operations_center.contracts import LaneDecision, TaskProposal
-from operations_center.contracts.common import (
+from switchboard.contracts import LaneDecision, TaskProposal
+from switchboard.contracts.common import (
     TaskTarget,
 )
-from operations_center.contracts.enums import (
+from switchboard.contracts.enums import (
     BackendName,
     ExecutionMode,
     LaneName,
@@ -228,7 +228,7 @@ class TestBackendOverrideRules:
         result = selector.select(_proposal(risk_level=RiskLevel.LOW))
         assert result.selected_lane == LaneName.CODEX_CLI
         # backend is "kodo" after override; maps to BackendName.KODO
-        from operations_center.contracts.enums import BackendName
+        from switchboard.contracts.enums import BackendName
         assert result.selected_backend == BackendName.KODO
 
     def test_archon_then_kodo_is_preserved_without_coercion(self):
