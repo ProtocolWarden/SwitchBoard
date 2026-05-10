@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
-# Copyright (C) 2026 Velascat
+# Copyright (C) 2026 ProtocolWarden
 """SwitchBoard domain layer — core models and types."""
 
 from switchboard.domain.capability_model import CapabilityModel

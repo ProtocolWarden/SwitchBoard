@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
-# Copyright (C) 2026 Velascat
+# Copyright (C) 2026 ProtocolWarden
 """ExecutorCatalog port — the three v1 queries SB consumes.
 
 SwitchBoard does not import OperationsCenter's catalog implementation

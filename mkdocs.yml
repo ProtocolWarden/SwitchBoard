@@ -1,8 +1,8 @@
 site_name: SwitchBoard
 site_description: Policy-driven execution-lane selector for canonical task proposals
 site_url: https://velascat.github.io/SwitchBoard/
-repo_url: https://github.com/Velascat/SwitchBoard
-repo_name: Velascat/SwitchBoard
+repo_url: https://github.com/ProtocolWarden/SwitchBoard
+repo_name: ProtocolWarden/SwitchBoard
 edit_uri: edit/main/docs/
 
 theme:

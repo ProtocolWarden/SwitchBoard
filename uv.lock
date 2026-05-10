@@ -75,7 +75,7 @@ wheels = [
 [[package]]
 name = "cxrp"
 version = "0.2.0"
-source = { git = "https://github.com/Velascat/CxRP.git#c5529675e97cefee56034cb7c108cb2591e7d278" }
+source = { git = "https://github.com/ProtocolWarden/CxRP.git#c5529675e97cefee56034cb7c108cb2591e7d278" }
 dependencies = [
     { name = "jsonschema" },
 ]
@@ -83,7 +83,7 @@ dependencies = [
 [[package]]
 name = "executor-runtime"
 version = "0.1.0"
-source = { git = "https://github.com/Velascat/ExecutorRuntime.git#a23ac4c36c255f4a1698e0541b9aa471034b8ca8" }
+source = { git = "https://github.com/ProtocolWarden/ExecutorRuntime.git#a23ac4c36c255f4a1698e0541b9aa471034b8ca8" }
 dependencies = [
     { name = "rxp" },
 ]
@@ -246,7 +246,7 @@ wheels = [
 [[package]]
 name = "operations-center"
 version = "0.1.0"
-source = { git = "https://github.com/Velascat/OperationsCenter.git#f41bc93196d5a1722b941e6c111948158ee93468" }
+source = { git = "https://github.com/ProtocolWarden/OperationsCenter.git#f41bc93196d5a1722b941e6c111948158ee93468" }
 dependencies = [
     { name = "cxrp" },
     { name = "executor-runtime" },
@@ -684,7 +684,7 @@ wheels = [
 [[package]]
 name = "rxp"
 version = "0.1.0"
-source = { git = "https://github.com/Velascat/RxP.git#77e6a452551bdcd13e2d125001f6314b1b5bfff8" }
+source = { git = "https://github.com/ProtocolWarden/RxP.git#77e6a452551bdcd13e2d125001f6314b1b5bfff8" }
 dependencies = [
     { name = "jsonschema" },
     { name = "pydantic" },
@@ -702,7 +702,7 @@ wheels = [
 [[package]]
 name = "source-registry"
 version = "0.1.0"
-source = { git = "https://github.com/Velascat/SourceRegistry.git#dfaee02e6dd329ec76bc4272e044c2e711320a66" }
+source = { git = "https://github.com/ProtocolWarden/SourceRegistry.git#dfaee02e6dd329ec76bc4272e044c2e711320a66" }
 dependencies = [
     { name = "pydantic" },
     { name = "pyyaml" },
@@ -748,11 +748,11 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "cxrp", git = "https://github.com/Velascat/CxRP.git" },
+    { name = "cxrp", git = "https://github.com/ProtocolWarden/CxRP.git" },
     { name = "fastapi", specifier = ">=0.111.0" },
     { name = "httpx", specifier = ">=0.27.0" },
     { name = "httpx", marker = "extra == 'dev'", specifier = ">=0.27.0" },
-    { name = "operations-center", git = "https://github.com/Velascat/OperationsCenter.git" },
+    { name = "operations-center", git = "https://github.com/ProtocolWarden/OperationsCenter.git" },
     { name = "pydantic", specifier = ">=2.0" },
     { name = "pydantic-settings", specifier = ">=2.0" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0" },

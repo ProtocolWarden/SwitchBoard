@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
-# Copyright (C) 2026 Velascat
+# Copyright (C) 2026 ProtocolWarden
 """TaskProposal — the routing input SwitchBoard receives from OperationsCenter.
 
 SwitchBoard owns this type; it must not import TaskProposal from OC.

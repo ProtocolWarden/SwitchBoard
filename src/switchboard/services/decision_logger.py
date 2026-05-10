@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
-# Copyright (C) 2026 Velascat
+# Copyright (C) 2026 ProtocolWarden
 """DecisionLogger — persists routing decisions and provides a recent-N query.
 
 Each decision is appended via the configured :class:`JsonlDecisionSink` (if

@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
-# Copyright (C) 2026 Velascat
+# Copyright (C) 2026 ProtocolWarden
 """Phase 2: SwitchBoard emits CxRP-shaped LaneDecision at its boundary.
 
 Tests that the SB → CxRP mapper produces wire output conforming to CxRP's

@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
-# Copyright (C) 2026 Velascat
+# Copyright (C) 2026 ProtocolWarden
 """SignalAggregator — aggregate per-lane performance signals from decision history."""
 
 from __future__ import annotations

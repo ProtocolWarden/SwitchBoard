@@ -63,7 +63,7 @@ ExecutorRuntime).
 
 ```bash
 # 1. Clone and install
-git clone https://github.com/Velascat/SwitchBoard
+git clone https://github.com/ProtocolWarden/SwitchBoard
 cd SwitchBoard
 python -m venv .venv
 source .venv/bin/activate      # Windows: .venv\Scripts\activate
@@ -222,8 +222,8 @@ What SwitchBoard still does **not** own:
 - Workflow step sequencing (that is Archon's job)
 - Whether or when to act on a fallback/escalation (that is the execution layer's decision)
 
-See **[WorkStation/docs/architecture/routing/routing-fallback-escalation.md](https://github.com/Velascat/WorkStation/blob/main/docs/architecture/routing/routing-fallback-escalation.md)** for architecture and
-**[WorkStation/docs/architecture/routing/routing-fallback-escalation-examples.md](https://github.com/Velascat/WorkStation/blob/main/docs/architecture/routing/routing-fallback-escalation-examples.md)** for examples.
+See **[WorkStation/docs/architecture/routing/routing-fallback-escalation.md](https://github.com/ProtocolWarden/WorkStation/blob/main/docs/architecture/routing/routing-fallback-escalation.md)** for architecture and
+**[WorkStation/docs/architecture/routing/routing-fallback-escalation-examples.md](https://github.com/ProtocolWarden/WorkStation/blob/main/docs/architecture/routing/routing-fallback-escalation-examples.md)** for examples.
 
 ---
 
@@ -245,7 +245,7 @@ See **[WorkStation/docs/architecture/routing/routing-fallback-escalation.md](htt
 | [CONTRIBUTING.md](CONTRIBUTING.md) | Contributor |
 
 Cross-repo architecture (component roles, ADRs, glossary):
-**[WorkStation/docs/architecture/](https://github.com/Velascat/WorkStation/tree/main/docs/architecture)**
+**[WorkStation/docs/architecture/](https://github.com/ProtocolWarden/WorkStation/tree/main/docs/architecture)**
 
 ---
 
@@ -256,7 +256,7 @@ lane-selection logic, routing evidence, and service-local configuration.
 
 SwitchBoard does **not** own the Dockerfile or compose service definition used to
 run it in the shared stack — those belong to
-[WorkStation](https://github.com/Velascat/WorkStation). SwitchBoard's `.env.example`
+[WorkStation](https://github.com/ProtocolWarden/WorkStation). SwitchBoard's `.env.example`
 documents the environment contract that WorkStation satisfies at runtime.
 
 For the full platform ownership model see `WorkStation/docs/architecture/system/ownership.md`.

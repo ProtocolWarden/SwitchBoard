@@ -1,7 +1,7 @@
 # Quickstart
 
 ```bash
-git clone https://github.com/Velascat/SwitchBoard
+git clone https://github.com/ProtocolWarden/SwitchBoard
 cd SwitchBoard
 python -m venv .venv
 source .venv/bin/activate

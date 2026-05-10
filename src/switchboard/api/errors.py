@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
-# Copyright (C) 2026 Velascat
+# Copyright (C) 2026 ProtocolWarden
 """Structured error response helpers for the SwitchBoard API.
 
 Routing endpoints return a small structured error body:
