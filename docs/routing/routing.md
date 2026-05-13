@@ -26,7 +26,7 @@ path.
   route selection and handoff.
 
 - **Not a model host.** If `aider_local` is selected, SwitchBoard is choosing a
-  WorkStation-hosted capability. WorkStation deploys the local model services;
+  PlatformDeployment-hosted capability. PlatformDeployment deploys the local model services;
   SwitchBoard only decides to use them.
 
 - **Not an execution layer.** Selecting `kodo` or `archon_then_kodo` means the lane
@@ -91,7 +91,7 @@ ceiling comparisons (`low < medium < high`).
 
 | Lane | Description |
 |------|-------------|
-| `aider_local` | WorkStation-hosted local Aider execution. Zero marginal API cost. |
+| `aider_local` | PlatformDeployment-hosted local Aider execution. Zero marginal API cost. |
 | `claude_cli` | Claude Code CLI execution. Requires OAuth. |
 | `codex_cli` | Codex CLI execution. Requires subscription. |
 

@@ -16,7 +16,7 @@ SwitchBoard  (port 20401)
 Execution lane
   ├── claude_cli    (Claude Code CLI, OAuth/subscription)
   ├── codex_cli     (Codex CLI, OpenAI subscription)
-  └── aider_local   (Aider + WorkStation tiny models, no API cost)
+  └── aider_local   (Aider + PlatformDeployment tiny models, no API cost)
 ```
 
 SwitchBoard decides **how** a task runs. It does not decide **what** to work on
@@ -46,7 +46,7 @@ ExecutorRuntime).
   via their respective CLIs. The `aider_local` lane requires no external auth.
 
 - **Not a local model host.** SwitchBoard selects the `aider_local` lane but does not
-  deploy or serve the tiny models that lane uses. WorkStation owns local model
+  deploy or serve the tiny models that lane uses. PlatformDeployment owns local model
   deployment.
 
 - **Not the decision engine.** SwitchBoard does not decide what work to do next, what
@@ -95,7 +95,7 @@ SwitchBoard is a thin policy boundary: requests come in, a lane is selected from
 |------|--------|------|------|
 | `claude_cli` | Claude Code CLI | OAuth / Claude.ai subscription | Premium |
 | `codex_cli` | Codex CLI | OpenAI subscription | Premium |
-| `aider_local` | Aider + WorkStation tiny models | None | Free (local) |
+| `aider_local` | Aider + PlatformDeployment tiny models | None | Free (local) |
 
 Lane selection is policy-driven. Changing cost/quality tradeoffs is a config edit
 to `config/policy.yaml` — no code change required.
@@ -222,8 +222,8 @@ What SwitchBoard still does **not** own:
 - Workflow step sequencing (that is Archon's job)
 - Whether or when to act on a fallback/escalation (that is the execution layer's decision)
 
-See **[WorkStation/docs/architecture/routing/routing-fallback-escalation.md](https://github.com/ProtocolWarden/WorkStation/blob/main/docs/architecture/routing/routing-fallback-escalation.md)** for architecture and
-**[WorkStation/docs/architecture/routing/routing-fallback-escalation-examples.md](https://github.com/ProtocolWarden/WorkStation/blob/main/docs/architecture/routing/routing-fallback-escalation-examples.md)** for examples.
+See **[PlatformDeployment/docs/architecture/routing/routing-fallback-escalation.md](https://github.com/ProtocolWarden/PlatformDeployment/blob/main/docs/architecture/routing/routing-fallback-escalation.md)** for architecture and
+**[PlatformDeployment/docs/architecture/routing/routing-fallback-escalation-examples.md](https://github.com/ProtocolWarden/PlatformDeployment/blob/main/docs/architecture/routing/routing-fallback-escalation-examples.md)** for examples.
 
 ---
 
@@ -245,7 +245,7 @@ See **[WorkStation/docs/architecture/routing/routing-fallback-escalation.md](htt
 | [CONTRIBUTING.md](CONTRIBUTING.md) | Contributor |
 
 Cross-repo architecture (component roles, ADRs, glossary):
-**[WorkStation/docs/architecture/](https://github.com/ProtocolWarden/WorkStation/tree/main/docs/architecture)**
+**[PlatformDeployment/docs/architecture/](https://github.com/ProtocolWarden/PlatformDeployment/tree/main/docs/architecture)**
 
 ---
 
@@ -256,10 +256,10 @@ lane-selection logic, routing evidence, and service-local configuration.
 
 SwitchBoard does **not** own the Dockerfile or compose service definition used to
 run it in the shared stack — those belong to
-[WorkStation](https://github.com/ProtocolWarden/WorkStation). SwitchBoard's `.env.example`
-documents the environment contract that WorkStation satisfies at runtime.
+[PlatformDeployment](https://github.com/ProtocolWarden/PlatformDeployment). SwitchBoard's `.env.example`
+documents the environment contract that PlatformDeployment satisfies at runtime.
 
-For the full platform ownership model see `WorkStation/docs/architecture/system/ownership.md`.
+For the full platform ownership model see `PlatformDeployment/docs/architecture/system/ownership.md`.
 
 ---
 
