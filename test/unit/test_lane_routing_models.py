@@ -53,7 +53,7 @@ def test_eligibility_status_values():
 def _candidate(**kw) -> RouteCandidate:
     defaults = dict(
         lane="claude_cli",
-        backend="kodo",
+        backend="team_executor",
         priority=10,
         reason="test reason",
         eligibility_status=EligibilityStatus.ELIGIBLE,
@@ -68,7 +68,7 @@ def _candidate(**kw) -> RouteCandidate:
 def test_route_candidate_construction():
     c = _candidate()
     assert c.lane == "claude_cli"
-    assert c.backend == "kodo"
+    assert c.backend == "team_executor"
     assert c.eligibility_status == EligibilityStatus.ELIGIBLE
 
 
@@ -128,7 +128,7 @@ def test_escalation_plan_empty():
 
 def test_escalation_plan_with_candidates():
     c = _candidate(
-        backend="archon_then_kodo",
+        backend="dag_executor",
         estimated_cost_class=CostClass.HIGH,
         estimated_capability_class=CapabilityClass.WORKFLOW,
     )
@@ -147,7 +147,7 @@ def _routing_plan(**kw) -> RoutingPlan:
         primary=_candidate(),
         fallbacks=FallbackPlan(),
         escalations=EscalationPlan(),
-        policy_summary="primary=claude_cli/kodo",
+        policy_summary="primary=claude_cli/team_executor",
         primary_reason="matched rule medium_implementation",
         fallback_reasoning="no fallbacks defined",
         escalation_reasoning="no escalation warranted",
@@ -195,24 +195,24 @@ def test_local_route_cost_is_low():
     assert route_cost_class("aider_local", "direct_local") == CostClass.LOW
 
 
-def test_kodo_route_cost_is_medium():
-    assert route_cost_class("claude_cli", "kodo") == CostClass.MEDIUM
+def test_team_executor_route_cost_is_medium():
+    assert route_cost_class("claude_cli", "team_executor") == CostClass.MEDIUM
 
 
-def test_archon_route_cost_is_high():
-    assert route_cost_class("claude_cli", "archon_then_kodo") == CostClass.HIGH
+def test_dag_executor_route_cost_is_high():
+    assert route_cost_class("claude_cli", "dag_executor") == CostClass.HIGH
 
 
 def test_local_route_capability_is_basic():
     assert route_capability_class("aider_local", "direct_local") == CapabilityClass.BASIC
 
 
-def test_kodo_route_capability_is_enhanced():
-    assert route_capability_class("claude_cli", "kodo") == CapabilityClass.ENHANCED
+def test_team_executor_route_capability_is_enhanced():
+    assert route_capability_class("claude_cli", "team_executor") == CapabilityClass.ENHANCED
 
 
-def test_archon_route_capability_is_workflow():
-    assert route_capability_class("claude_cli", "archon_then_kodo") == CapabilityClass.WORKFLOW
+def test_dag_executor_route_capability_is_workflow():
+    assert route_capability_class("claude_cli", "dag_executor") == CapabilityClass.WORKFLOW
 
 
 def test_unknown_route_defaults_to_medium_enhanced():

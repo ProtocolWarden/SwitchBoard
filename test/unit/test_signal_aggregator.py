@@ -18,7 +18,7 @@ def _record(
     return DecisionRecord(
         timestamp="2024-01-01T00:00:00+00:00",
         selected_lane=lane,
-        selected_backend="kodo",
+        selected_backend="team_executor",
         rule_name="test",
         reason="test",
         status=status,
@@ -106,7 +106,7 @@ class TestSignalAggregator:
         record = DecisionRecord(
             timestamp="2024-01-01T00:00:00+00:00",
             selected_lane="",
-            selected_backend="kodo",
+            selected_backend="team_executor",
             rule_name="test",
             reason="test",
         )

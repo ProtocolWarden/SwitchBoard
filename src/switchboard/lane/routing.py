@@ -164,23 +164,23 @@ class RoutingPlan(BaseModel):
 # Used by engines when building RouteCandidate instances.
 _ROUTE_COST: dict[tuple[str, str], CostClass] = {
     ("aider_local", "direct_local"): CostClass.LOW,
-    ("aider_local", "kodo"): CostClass.MEDIUM,
-    ("claude_cli", "kodo"): CostClass.MEDIUM,
-    ("codex_cli", "kodo"): CostClass.MEDIUM,
-    ("claude_cli", "archon_then_kodo"): CostClass.HIGH,
-    ("codex_cli", "archon_then_kodo"): CostClass.HIGH,
-    ("claude_cli", "archon"): CostClass.HIGH,
+    ("aider_local", "team_executor"): CostClass.MEDIUM,
+    ("claude_cli", "team_executor"): CostClass.MEDIUM,
+    ("codex_cli", "team_executor"): CostClass.MEDIUM,
+    ("claude_cli", "dag_executor"): CostClass.HIGH,
+    ("codex_cli", "dag_executor"): CostClass.HIGH,
+    ("claude_cli", "critique_executor"): CostClass.HIGH,
     ("claude_cli", "openclaw"): CostClass.HIGH,
 }
 
 _ROUTE_CAPABILITY: dict[tuple[str, str], CapabilityClass] = {
     ("aider_local", "direct_local"): CapabilityClass.BASIC,
-    ("aider_local", "kodo"): CapabilityClass.ENHANCED,
-    ("claude_cli", "kodo"): CapabilityClass.ENHANCED,
-    ("codex_cli", "kodo"): CapabilityClass.ENHANCED,
-    ("claude_cli", "archon_then_kodo"): CapabilityClass.WORKFLOW,
-    ("codex_cli", "archon_then_kodo"): CapabilityClass.WORKFLOW,
-    ("claude_cli", "archon"): CapabilityClass.WORKFLOW,
+    ("aider_local", "team_executor"): CapabilityClass.ENHANCED,
+    ("claude_cli", "team_executor"): CapabilityClass.ENHANCED,
+    ("codex_cli", "team_executor"): CapabilityClass.ENHANCED,
+    ("claude_cli", "dag_executor"): CapabilityClass.WORKFLOW,
+    ("codex_cli", "dag_executor"): CapabilityClass.WORKFLOW,
+    ("claude_cli", "critique_executor"): CapabilityClass.WORKFLOW,
     ("claude_cli", "openclaw"): CapabilityClass.PREMIUM,
 }
 

@@ -42,7 +42,7 @@ def to_cxrp_lane_decision(
     """Translate an OC LaneDecision into the CxRP envelope shape.
 
     OC's `selected_lane` (e.g. ``claude_cli``) becomes CxRP's `executor`.
-    OC's `selected_backend` (e.g. ``kodo``) becomes CxRP's `backend`.
+    OC's `selected_backend` (e.g. ``team_executor``) becomes CxRP's `backend`.
     The abstract CxRP `lane` category is derived from the OC lane via
     `_OC_LANE_TO_ECP_CATEGORY`.
     """

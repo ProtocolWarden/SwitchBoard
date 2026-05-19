@@ -17,14 +17,14 @@ from switchboard.lane.policy import AlternativeRoute, LaneRoutingPolicy
 
 def test_alternative_route_requires_name():
     with pytest.raises(ValidationError):
-        AlternativeRoute(lane="claude_cli", backend="kodo", role="fallback")
+        AlternativeRoute(lane="claude_cli", backend="team_executor", role="fallback")
 
 
 def test_alternative_route_defaults():
     alt = AlternativeRoute(
         name="test",
         lane="claude_cli",
-        backend="kodo",
+        backend="team_executor",
         role="fallback",
     )
     assert alt.from_lanes == []
@@ -63,27 +63,27 @@ def test_from_lanes_filters():
         from_lanes=["aider_local"],
     )
     assert alt.is_relevant_for_primary("aider_local", "direct_local") is True
-    assert alt.is_relevant_for_primary("claude_cli", "kodo") is False
+    assert alt.is_relevant_for_primary("claude_cli", "team_executor") is False
 
 
 def test_from_backends_filters():
     alt = AlternativeRoute(
         name="t", lane="a", backend="b", role="fallback",
-        from_backends=["archon_then_kodo"],
+        from_backends=["dag_executor"],
     )
-    assert alt.is_relevant_for_primary("claude_cli", "archon_then_kodo") is True
-    assert alt.is_relevant_for_primary("claude_cli", "kodo") is False
+    assert alt.is_relevant_for_primary("claude_cli", "dag_executor") is True
+    assert alt.is_relevant_for_primary("claude_cli", "team_executor") is False
 
 
 def test_both_from_filters_combined():
     alt = AlternativeRoute(
         name="t", lane="a", backend="b", role="fallback",
         from_lanes=["claude_cli"],
-        from_backends=["kodo"],
+        from_backends=["team_executor"],
     )
-    assert alt.is_relevant_for_primary("claude_cli", "kodo") is True
-    assert alt.is_relevant_for_primary("claude_cli", "archon_then_kodo") is False
-    assert alt.is_relevant_for_primary("aider_local", "kodo") is False
+    assert alt.is_relevant_for_primary("claude_cli", "team_executor") is True
+    assert alt.is_relevant_for_primary("claude_cli", "dag_executor") is False
+    assert alt.is_relevant_for_primary("aider_local", "team_executor") is False
 
 
 # ---------------------------------------------------------------------------

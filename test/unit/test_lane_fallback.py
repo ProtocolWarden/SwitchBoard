@@ -17,7 +17,7 @@ def _engine() -> FallbackPolicyEngine:
 def _policy_with_alts(*alts: AlternativeRoute) -> LaneRoutingPolicy:
     return LaneRoutingPolicy(
         alternative_routes=list(alts),
-        fallback=FallbackPolicy(lane="claude_cli", backend="kodo"),
+        fallback=FallbackPolicy(lane="claude_cli", backend="team_executor"),
     )
 
 
@@ -25,7 +25,7 @@ def _fallback_alt(**kw) -> AlternativeRoute:
     defaults = dict(
         name="test_fallback",
         lane="claude_cli",
-        backend="kodo",
+        backend="team_executor",
         role="fallback",
         cost_class="medium",
         capability_class="enhanced",
@@ -52,10 +52,10 @@ def test_eligible_fallback_returned():
 
 
 def test_eligible_fallback_has_correct_lane_backend():
-    policy = _policy_with_alts(_fallback_alt(lane="claude_cli", backend="kodo"))
+    policy = _policy_with_alts(_fallback_alt(lane="claude_cli", backend="team_executor"))
     plan, _ = _engine().evaluate({}, "aider_local", "direct_local", policy)
     assert plan.candidates[0].lane == "claude_cli"
-    assert plan.candidates[0].backend == "kodo"
+    assert plan.candidates[0].backend == "team_executor"
 
 
 def test_eligible_fallback_confidence_preserved():
@@ -86,7 +86,7 @@ def test_from_lanes_filters_irrelevant_primary():
     alt = _fallback_alt(from_lanes=["aider_local"])
     policy = _policy_with_alts(alt)
     # When primary is claude_cli, this fallback is not relevant
-    plan, blocked = _engine().evaluate({}, "claude_cli", "kodo", policy)
+    plan, blocked = _engine().evaluate({}, "claude_cli", "team_executor", policy)
     assert plan.candidates == []
     assert blocked == []
 
@@ -99,18 +99,18 @@ def test_from_lanes_matches_primary():
 
 
 def test_from_backends_filters_irrelevant_primary():
-    alt = _fallback_alt(from_backends=["archon_then_kodo"])
+    alt = _fallback_alt(from_backends=["dag_executor"])
     policy = _policy_with_alts(alt)
-    # When primary backend is kodo, not relevant
-    plan, blocked = _engine().evaluate({}, "claude_cli", "kodo", policy)
+    # When primary backend is team_executor, not relevant
+    plan, blocked = _engine().evaluate({}, "claude_cli", "team_executor", policy)
     assert plan.candidates == []
     assert blocked == []
 
 
 def test_from_backends_matches_primary():
-    alt = _fallback_alt(from_backends=["archon_then_kodo"])
+    alt = _fallback_alt(from_backends=["dag_executor"])
     policy = _policy_with_alts(alt)
-    plan, _ = _engine().evaluate({}, "claude_cli", "archon_then_kodo", policy)
+    plan, _ = _engine().evaluate({}, "claude_cli", "dag_executor", policy)
     assert len(plan.candidates) == 1
 
 
@@ -174,10 +174,10 @@ def test_blocked_candidate_has_zero_confidence():
 
 
 def test_excluded_backend_blocks_fallback():
-    alt = _fallback_alt(backend="kodo")
+    alt = _fallback_alt(backend="team_executor")
     policy = LaneRoutingPolicy(
         alternative_routes=[alt],
-        excluded_backends=["kodo"],
+        excluded_backends=["team_executor"],
     )
     plan, blocked = _engine().evaluate({}, "aider_local", "direct_local", policy)
     assert plan.candidates == []
@@ -248,7 +248,7 @@ def test_default_policy_has_local_to_remote_fallback():
     plan, blocked = _engine().evaluate(
         {}, "aider_local", "direct_local", DEFAULT_POLICY, labels=[]
     )
-    assert any(c.lane == "claude_cli" and c.backend == "kodo" for c in plan.candidates)
+    assert any(c.lane == "claude_cli" and c.backend == "team_executor" for c in plan.candidates)
 
 
 def test_default_policy_local_to_remote_blocked_by_local_only():
@@ -259,8 +259,8 @@ def test_default_policy_local_to_remote_blocked_by_local_only():
     assert any(c.eligibility_status == EligibilityStatus.BLOCKED_BY_CONSTRAINT for c in blocked)
 
 
-def test_default_policy_workflow_fallback_from_archon():
+def test_default_policy_workflow_fallback_from_dag_executor():
     plan, _ = _engine().evaluate(
-        {}, "claude_cli", "archon_then_kodo", DEFAULT_POLICY, labels=[]
+        {}, "claude_cli", "dag_executor", DEFAULT_POLICY, labels=[]
     )
-    assert any(c.lane == "claude_cli" and c.backend == "kodo" for c in plan.candidates)
+    assert any(c.lane == "claude_cli" and c.backend == "team_executor" for c in plan.candidates)

@@ -12,7 +12,7 @@ Escalation is policy-recommended, not automatic. SwitchBoard expresses the
 intent; execution layers decide whether to act on it.
 
 Key constraints:
-- Escalation to archon_then_kodo requires explicit task shape justification
+- Escalation to dag_executor requires explicit task shape justification
 - Explicit constraints (local_only, no_remote) block all remote escalations
 - Already-at-workflow primary has no further escalation path
 """
@@ -37,7 +37,7 @@ class EscalationPolicyEngine:
     Returns an EscalationPlan (eligible candidates) and a list of blocked
     RouteCandidate entries. Blocked entries go into RoutingPlan.blocked_candidates.
 
-    Escalation to archon_then_kodo or workflow backends is only offered when
+    Escalation to dag_executor or workflow backends is only offered when
     applies_when conditions specifically justify it — it is never offered
     merely because a higher tier exists.
     """

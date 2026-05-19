@@ -92,7 +92,7 @@ class FallbackPolicy(BaseModel):
     """Fallback lane/backend when no rule matches."""
 
     lane: str = "claude_cli"
-    backend: str = "kodo"
+    backend: str = "team_executor"
     rationale: str = "Default fallback: no policy rule matched"
 
 

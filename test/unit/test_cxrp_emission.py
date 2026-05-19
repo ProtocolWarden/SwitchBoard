@@ -38,10 +38,10 @@ def _make_oc_decision() -> SbLaneDecision:
     return SbLaneDecision(
         proposal_id="prop-001",
         selected_lane=LaneName.CLAUDE_CLI,
-        selected_backend=BackendName.KODO,
+        selected_backend=BackendName.TEAM_EXECUTOR,
         confidence=0.92,
         policy_rule_matched="bugfix-low-risk",
-        rationale="task_type=bug_fix + risk=low → claude_cli via kodo",
+        rationale="task_type=bug_fix + risk=low → claude_cli via team_executor",
         alternatives_considered=[LaneName.CODEX_CLI],
     )
 
@@ -57,7 +57,7 @@ def test_mapper_separates_category_from_executor_and_backend():
     cxrp = to_cxrp_lane_decision(_make_oc_decision())
     assert cxrp.lane == LaneType.CODING_AGENT
     assert cxrp.executor == "claude_cli"
-    assert cxrp.backend == "kodo"
+    assert cxrp.backend == "team_executor"
 
 
 def test_mapper_preserves_identifiers_and_rationale():
@@ -96,7 +96,7 @@ def test_mapper_rejects_out_of_bounds_confidence():
         SbLaneDecision(
             proposal_id="x",
             selected_lane=LaneName.CLAUDE_CLI,
-            selected_backend=BackendName.KODO,
+            selected_backend=BackendName.TEAM_EXECUTOR,
             confidence=1.5,
         )
     with pytest.raises(ValueError, match="confidence must be between"):

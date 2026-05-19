@@ -43,7 +43,7 @@ class FakeCatalog:
         return list(self._outcomes.get(outcome, []))
 
 
-def _decision(backend: str = "kodo", lane: str = "claude_cli") -> LaneDecision:
+def _decision(backend: str = "team_executor", lane: str = "claude_cli") -> LaneDecision:
     return LaneDecision(
         proposal_id="p", selected_lane=LaneName(lane),
         selected_backend=BackendName(backend), confidence=0.9,
@@ -52,20 +52,20 @@ def _decision(backend: str = "kodo", lane: str = "claude_cli") -> LaneDecision:
 
 class TestOutcomeAdvisories:
     def test_adapter_only_no_advisories(self):
-        cat = FakeCatalog(outcomes={"adapter_only": ["kodo"]})
-        out = advise(catalog=cat, decision=_decision("kodo"))
+        cat = FakeCatalog(outcomes={"adapter_only": ["team_executor"]})
+        out = advise(catalog=cat, decision=_decision("team_executor"))
         assert out == []
 
     def test_adapter_plus_wrapper_emits_info(self):
-        cat = FakeCatalog(outcomes={"adapter_plus_wrapper": ["kodo"]})
-        out = advise(catalog=cat, decision=_decision("kodo"))
+        cat = FakeCatalog(outcomes={"adapter_plus_wrapper": ["team_executor"]})
+        out = advise(catalog=cat, decision=_decision("team_executor"))
         assert len(out) == 1
         assert out[0].level == AdvisoryLevel.INFO
         assert out[0].code == "BACKEND_ADAPTER_PLUS_WRAPPER"
 
     def test_upstream_patch_pending_emits_warn(self):
-        cat = FakeCatalog(outcomes={"upstream_patch_pending": ["archon"]})
-        out = advise(catalog=cat, decision=_decision("archon"))
+        cat = FakeCatalog(outcomes={"upstream_patch_pending": ["dag_executor"]})
+        out = advise(catalog=cat, decision=_decision("dag_executor"))
         assert any(a.level == AdvisoryLevel.WARN and a.code.startswith("BACKEND_UPSTREAM") for a in out)
 
     def test_fork_required_emits_block(self):
@@ -83,24 +83,24 @@ class TestOutcomeAdvisories:
 class TestCapabilityAdvisories:
     def test_block_when_capability_missing(self):
         cat = FakeCatalog(
-            outcomes={"adapter_only": ["kodo"]},
-            capabilities={"kodo": ["repo_read"]},
+            outcomes={"adapter_only": ["team_executor"]},
+            capabilities={"team_executor": ["repo_read"]},
         )
         out = advise(
             catalog=cat,
-            decision=_decision("kodo"),
+            decision=_decision("team_executor"),
             required_capabilities={"repo_read", "repo_patch"},
         )
         assert any(a.code == "BACKEND_MISSING_CAPABILITIES" and a.level == AdvisoryLevel.BLOCK for a in out)
 
     def test_no_block_when_capabilities_satisfied(self):
         cat = FakeCatalog(
-            outcomes={"adapter_only": ["kodo"]},
-            capabilities={"kodo": ["repo_read", "repo_patch", "test_run"]},
+            outcomes={"adapter_only": ["team_executor"]},
+            capabilities={"team_executor": ["repo_read", "repo_patch", "test_run"]},
         )
         out = advise(
             catalog=cat,
-            decision=_decision("kodo"),
+            decision=_decision("team_executor"),
             required_capabilities={"repo_read", "repo_patch"},
         )
         assert all(a.code != "BACKEND_MISSING_CAPABILITIES" for a in out)
@@ -109,22 +109,22 @@ class TestCapabilityAdvisories:
 class TestRuntimeAdvisories:
     def test_block_when_runtime_unsupported(self):
         cat = FakeCatalog(
-            outcomes={"adapter_plus_wrapper": ["kodo"]},
-            runtimes={"cli_subscription": ["kodo"]},
+            outcomes={"adapter_plus_wrapper": ["team_executor"]},
+            runtimes={"cli_subscription": ["team_executor"]},
         )
         out = advise(
-            catalog=cat, decision=_decision("kodo"),
+            catalog=cat, decision=_decision("team_executor"),
             requested_runtime_kind="hosted_api",
         )
         assert any(a.code == "BACKEND_MISSING_RUNTIME" and a.level == AdvisoryLevel.BLOCK for a in out)
 
     def test_no_block_when_runtime_supported(self):
         cat = FakeCatalog(
-            outcomes={"adapter_plus_wrapper": ["kodo"]},
-            runtimes={"cli_subscription": ["kodo"]},
+            outcomes={"adapter_plus_wrapper": ["team_executor"]},
+            runtimes={"cli_subscription": ["team_executor"]},
         )
         out = advise(
-            catalog=cat, decision=_decision("kodo"),
+            catalog=cat, decision=_decision("team_executor"),
             requested_runtime_kind="cli_subscription",
         )
         assert all(a.code != "BACKEND_MISSING_RUNTIME" for a in out)
