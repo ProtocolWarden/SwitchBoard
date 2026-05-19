@@ -7,9 +7,9 @@ A **lane** is a named execution path that SwitchBoard selects based on task attr
 | Lane | Backend | Cost | Capability |
 |------|---------|------|------------|
 | `aider_local` | `aider_local` | Free | CPU-only Aider via local Ollama |
-| `claude_cli` | `kodo` | Medium | Claude-powered Kodo executor |
-| `claude_cli` | `archon_then_kodo` | High | Archon workflow + Kodo execution |
-| `codex_cli` | `kodo` | Medium | Codex routing, Kodo execution |
+| `claude_cli` | `team_executor` | Medium | Claude-powered Kodo executor |
+| `claude_cli` | `dag_executor` | High | Archon workflow + Kodo execution |
+| `codex_cli` | `team_executor` | Medium | Codex routing, Kodo execution |
 
 ## aider_local
 
@@ -35,9 +35,9 @@ Default routing rules:
 
 | Priority | Rule | Condition | Backend |
 |----------|------|-----------|---------|
-| 30 | `medium_implementation` | `task_type` ∈ {bug_fix, test_write, dependency_update} AND risk ∈ {low, medium} | `kodo` |
-| 40 | `premium_structured` | `task_type` ∈ {refactor, feature} AND risk ∈ {medium, high} | `archon_then_kodo` |
-| 50 | `high_risk_escalation` | `risk_level=high` | `kodo` |
+| 30 | `medium_implementation` | `task_type` ∈ {bug_fix, test_write, dependency_update} AND risk ∈ {low, medium} | `team_executor` |
+| 40 | `premium_structured` | `task_type` ∈ {refactor, feature} AND risk ∈ {medium, high} | `dag_executor` |
+| 50 | `high_risk_escalation` | `risk_level=high` | `team_executor` |
 
 **Fallback (global):** `claude_cli + kodo` — used when no rule matches.
 
