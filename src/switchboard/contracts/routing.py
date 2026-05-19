@@ -38,4 +38,9 @@ class LaneDecision(BaseModel):
     decided_at: datetime = Field(default_factory=_utcnow)
     switchboard_version: str | None = Field(default=None)
 
+    # Executor hints injected by SwitchBoard at routing time.
+    # Consumers (OC adapters) read these to configure execution details
+    # without having to re-derive them from lane/backend alone.
+    metadata: dict[str, str] = Field(default_factory=dict)
+
     model_config = {"frozen": True}
