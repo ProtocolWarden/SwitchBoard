@@ -26,7 +26,7 @@ def test_lane_name_values() -> None:
 
 
 def test_backend_name_values() -> None:
-    assert BackendName.ARCHON == "archon"
+    assert BackendName.DAG_EXECUTOR == "dag_executor"
     assert BackendName.DEMO_STUB == "demo_stub"
 
 
@@ -48,4 +48,4 @@ def test_priority_values() -> None:
 def test_enums_are_str_subclass() -> None:
     assert isinstance(TaskType.FEATURE, str)
     assert isinstance(LaneName.CLAUDE_CLI, str)
-    assert isinstance(BackendName.ARCHON, str)
+    assert isinstance(BackendName.DAG_EXECUTOR, str)

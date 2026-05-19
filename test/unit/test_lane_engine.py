@@ -62,7 +62,7 @@ def _proposal(
 def _minimal_policy(*rules: LaneRule, fallback_lane: str = "claude_cli") -> LaneRoutingPolicy:
     return LaneRoutingPolicy(
         rules=list(rules),
-        fallback=FallbackPolicy(lane=fallback_lane, backend="kodo"),
+        fallback=FallbackPolicy(lane=fallback_lane, backend="team_executor"),
     )
 
 
@@ -81,7 +81,7 @@ def _premium_rule(name: str = "premium", when: dict | None = None) -> LaneRule:
         name=name,
         priority=20,
         select_lane="claude_cli",
-        select_backend="kodo",
+        select_backend="team_executor",
         when=when or {"task_type": "feature"},
     )
 
@@ -144,7 +144,7 @@ class TestPolicyRuleMatching:
     def test_first_matching_rule_wins(self):
         rules = [
             LaneRule(name="first", priority=10, select_lane="aider_local", select_backend="direct_local", when={"task_type": "lint_fix"}),
-            LaneRule(name="second", priority=20, select_lane="claude_cli", select_backend="kodo", when={"task_type": "lint_fix"}),
+            LaneRule(name="second", priority=20, select_lane="claude_cli", select_backend="team_executor", when={"task_type": "lint_fix"}),
         ]
         selector = LaneSelector(policy=_minimal_policy(*rules))
         result = selector.select(_proposal(task_type=TaskType.LINT_FIX))
@@ -190,12 +190,12 @@ class TestBackendExclusion:
     def test_excluded_backend_skips_to_next_rule(self):
         rules = [
             LaneRule(name="local", priority=10, select_lane="aider_local", select_backend="direct_local", when={"task_type": "lint_fix"}),
-            LaneRule(name="premium", priority=20, select_lane="claude_cli", select_backend="kodo", when={"task_type": "lint_fix"}),
+            LaneRule(name="premium", priority=20, select_lane="claude_cli", select_backend="team_executor", when={"task_type": "lint_fix"}),
         ]
         policy = LaneRoutingPolicy(
             rules=rules,
             excluded_backends=["direct_local"],
-            fallback=FallbackPolicy(lane="claude_cli", backend="kodo"),
+            fallback=FallbackPolicy(lane="claude_cli", backend="team_executor"),
         )
         selector = LaneSelector(policy=policy)
         result = selector.select(_proposal(task_type=TaskType.LINT_FIX))
@@ -208,7 +208,7 @@ class TestBackendExclusion:
         policy = LaneRoutingPolicy(
             rules=rules,
             excluded_backends=["direct_local"],
-            fallback=FallbackPolicy(lane="claude_cli", backend="kodo"),
+            fallback=FallbackPolicy(lane="claude_cli", backend="team_executor"),
         )
         selector = LaneSelector(policy=policy)
         result = selector.select(_proposal(task_type=TaskType.LINT_FIX))
@@ -221,27 +221,27 @@ class TestBackendExclusion:
 
 class TestBackendOverrideRules:
     def test_backend_override_applied_for_matching_lane(self):
-        rule = LaneRule(name="codex_r", priority=10, select_lane="codex_cli", select_backend="archon_then_kodo", when={})
-        brule = BackendRule(name="codex_low", lane="codex_cli", select_backend="kodo", when={"risk_level": "low"})
-        policy = LaneRoutingPolicy(rules=[rule], backend_rules=[brule], fallback=FallbackPolicy(lane="claude_cli", backend="kodo"))
+        rule = LaneRule(name="codex_r", priority=10, select_lane="codex_cli", select_backend="dag_executor", when={})
+        brule = BackendRule(name="codex_low", lane="codex_cli", select_backend="team_executor", when={"risk_level": "low"})
+        policy = LaneRoutingPolicy(rules=[rule], backend_rules=[brule], fallback=FallbackPolicy(lane="claude_cli", backend="team_executor"))
         selector = LaneSelector(policy=policy)
         result = selector.select(_proposal(risk_level=RiskLevel.LOW))
         assert result.selected_lane == LaneName.CODEX_CLI
-        # backend is "kodo" after override; maps to BackendName.KODO
+        # backend is "team_executor" after override; maps to BackendName.TEAM_EXECUTOR
         from switchboard.contracts.enums import BackendName
-        assert result.selected_backend == BackendName.KODO
+        assert result.selected_backend == BackendName.TEAM_EXECUTOR
 
-    def test_archon_then_kodo_is_preserved_without_coercion(self):
+    def test_dag_executor_is_preserved_without_coercion(self):
         rule = LaneRule(
             name="structured",
             priority=10,
             select_lane="codex_cli",
-            select_backend="archon_then_kodo",
+            select_backend="dag_executor",
             when={},
         )
         selector = LaneSelector(policy=_minimal_policy(rule))
         result = selector.select(_proposal(task_type=TaskType.REFACTOR, risk_level=RiskLevel.HIGH))
-        assert result.selected_backend == BackendName.ARCHON_THEN_KODO
+        assert result.selected_backend == BackendName.DAG_EXECUTOR
 
 
 # ---------------------------------------------------------------------------
@@ -275,7 +275,7 @@ class TestExplain:
     def test_alternatives_ruled_out_populated(self):
         rules = [
             LaneRule(name="local", priority=10, select_lane="aider_local", select_backend="direct_local", when={"task_type": "lint_fix"}),
-            LaneRule(name="premium", priority=20, select_lane="claude_cli", select_backend="kodo", when={"task_type": "feature"}),
+            LaneRule(name="premium", priority=20, select_lane="claude_cli", select_backend="team_executor", when={"task_type": "feature"}),
         ]
         selector = LaneSelector(policy=_minimal_policy(*rules))
         exp = selector.explain(_proposal(task_type=TaskType.LINT_FIX))
@@ -293,7 +293,7 @@ class TestValidatePolicy:
         assert issues == []
 
     def test_unknown_lane_detected(self):
-        rule = LaneRule(name="bad", priority=10, select_lane="invalid_lane", select_backend="kodo", when={})
+        rule = LaneRule(name="bad", priority=10, select_lane="invalid_lane", select_backend="team_executor", when={})
         policy = _minimal_policy(rule)
         selector = LaneSelector(policy=policy)
         issues = selector.validate_policy()
@@ -309,45 +309,45 @@ class TestValidatePolicy:
     def test_duplicate_rule_name_detected(self):
         rules = [
             LaneRule(name="dup", priority=10, select_lane="aider_local", select_backend="direct_local", when={}),
-            LaneRule(name="dup", priority=20, select_lane="claude_cli", select_backend="kodo", when={}),
+            LaneRule(name="dup", priority=20, select_lane="claude_cli", select_backend="team_executor", when={}),
         ]
         selector = LaneSelector(policy=_minimal_policy(*rules))
         issues = selector.validate_policy()
         assert any("dup" in i for i in issues)
 
     def test_bad_fallback_lane_detected(self):
-        policy = LaneRoutingPolicy(fallback=FallbackPolicy(lane="not_a_lane", backend="kodo"))
+        policy = LaneRoutingPolicy(fallback=FallbackPolicy(lane="not_a_lane", backend="team_executor"))
         selector = LaneSelector(policy=policy)
         issues = selector.validate_policy()
         assert any("not_a_lane" in i for i in issues)
 
     def test_unrecognized_when_key_detected(self):
-        rule = LaneRule(name="r", priority=10, select_lane="claude_cli", select_backend="kodo",
+        rule = LaneRule(name="r", priority=10, select_lane="claude_cli", select_backend="team_executor",
                         when={"bogus_field": "x"})
         issues = LaneSelector(policy=_minimal_policy(rule)).validate_policy()
         assert any("bogus_field" in i for i in issues)
 
     def test_invalid_task_type_value_detected(self):
         # 'coding' is not a valid TaskType enum value
-        rule = LaneRule(name="r", priority=10, select_lane="claude_cli", select_backend="kodo",
+        rule = LaneRule(name="r", priority=10, select_lane="claude_cli", select_backend="team_executor",
                         when={"task_type": "coding"})
         issues = LaneSelector(policy=_minimal_policy(rule)).validate_policy()
         assert any("coding" in i for i in issues)
 
     def test_valid_task_type_list_accepted(self):
-        rule = LaneRule(name="r", priority=10, select_lane="claude_cli", select_backend="kodo",
+        rule = LaneRule(name="r", priority=10, select_lane="claude_cli", select_backend="team_executor",
                         when={"task_type": ["bug_fix", "lint_fix"]})
         issues = LaneSelector(policy=_minimal_policy(rule)).validate_policy()
         assert issues == []
 
     def test_invalid_value_in_task_type_list_detected(self):
-        rule = LaneRule(name="r", priority=10, select_lane="claude_cli", select_backend="kodo",
+        rule = LaneRule(name="r", priority=10, select_lane="claude_cli", select_backend="team_executor",
                         when={"task_type": ["bug_fix", "nonexistent"]})
         issues = LaneSelector(policy=_minimal_policy(rule)).validate_policy()
         assert any("nonexistent" in i for i in issues)
 
     def test_invalid_risk_level_detected(self):
-        rule = LaneRule(name="r", priority=10, select_lane="claude_cli", select_backend="kodo",
+        rule = LaneRule(name="r", priority=10, select_lane="claude_cli", select_backend="team_executor",
                         when={"risk_level": "very_high"})
         issues = LaneSelector(policy=_minimal_policy(rule)).validate_policy()
         assert any("very_high" in i for i in issues)
@@ -360,7 +360,7 @@ class TestValidatePolicy:
 
     def test_backend_rule_invalid_when_key_detected(self):
         from switchboard.lane.policy import BackendRule
-        brule = BackendRule(name="br", lane="claude_cli", select_backend="kodo",
+        brule = BackendRule(name="br", lane="claude_cli", select_backend="team_executor",
                             when={"unknown_attr": "x"})
         policy = LaneRoutingPolicy(backend_rules=[brule])
         issues = LaneSelector(policy=policy).validate_policy()

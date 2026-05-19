@@ -94,7 +94,7 @@ class TestBackendRuleMatches:
         rule = BackendRule(
             name="r",
             lane="codex_cli",
-            select_backend="kodo",
+            select_backend="team_executor",
             when={"risk_level": "low"},
         )
         assert rule.matches("claude_cli", {"risk_level": "low"}) is False
@@ -103,7 +103,7 @@ class TestBackendRuleMatches:
         rule = BackendRule(
             name="r",
             lane="codex_cli",
-            select_backend="kodo",
+            select_backend="team_executor",
             when={"risk_level": ["low", "medium"]},
         )
         assert rule.matches("codex_cli", {"risk_level": "medium"}) is True
@@ -112,7 +112,7 @@ class TestBackendRuleMatches:
         rule = BackendRule(
             name="r",
             lane="codex_cli",
-            select_backend="kodo",
+            select_backend="team_executor",
             when={"risk_level": "low"},
         )
         assert rule.matches("codex_cli", {"risk_level": "high"}) is False
@@ -125,7 +125,7 @@ class TestBackendRuleMatches:
 class TestLaneRoutingPolicy:
     def test_sorted_rules_by_priority(self):
         rules = [
-            LaneRule(name="b", priority=50, select_lane="claude_cli", select_backend="kodo", when={}),
+            LaneRule(name="b", priority=50, select_lane="claude_cli", select_backend="team_executor", when={}),
             LaneRule(name="a", priority=10, select_lane="aider_local", select_backend="direct_local", when={}),
         ]
         policy = LaneRoutingPolicy(rules=rules)
@@ -145,7 +145,7 @@ class TestLaneRoutingPolicy:
                     "when": {"task_type": "lint_fix"},
                 }
             ],
-            "fallback": {"lane": "claude_cli", "backend": "kodo"},
+            "fallback": {"lane": "claude_cli", "backend": "team_executor"},
         }
         policy = LaneRoutingPolicy.from_dict(data)
         assert len(policy.rules) == 1
@@ -155,4 +155,4 @@ class TestLaneRoutingPolicy:
     def test_default_fallback(self):
         policy = LaneRoutingPolicy()
         assert policy.fallback.lane == "claude_cli"
-        assert policy.fallback.backend == "kodo"
+        assert policy.fallback.backend == "team_executor"

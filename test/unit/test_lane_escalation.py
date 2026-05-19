@@ -17,7 +17,7 @@ def _engine() -> EscalationPolicyEngine:
 def _policy_with_alts(*alts: AlternativeRoute) -> LaneRoutingPolicy:
     return LaneRoutingPolicy(
         alternative_routes=list(alts),
-        fallback=FallbackPolicy(lane="claude_cli", backend="kodo"),
+        fallback=FallbackPolicy(lane="claude_cli", backend="team_executor"),
     )
 
 
@@ -25,7 +25,7 @@ def _escalation_alt(**kw) -> AlternativeRoute:
     defaults = dict(
         name="test_escalation",
         lane="claude_cli",
-        backend="archon_then_kodo",
+        backend="dag_executor",
         role="escalation",
         cost_class="high",
         capability_class="workflow",
@@ -45,28 +45,28 @@ def _escalation_alt(**kw) -> AlternativeRoute:
 def test_eligible_escalation_returned():
     policy = _policy_with_alts(_escalation_alt())
     plan, blocked = _engine().evaluate(
-        {}, "claude_cli", "kodo", policy
+        {}, "claude_cli", "team_executor", policy
     )
     assert len(plan.candidates) == 1
     assert plan.candidates[0].eligibility_status == EligibilityStatus.ELIGIBLE
 
 
 def test_eligible_escalation_has_correct_lane_backend():
-    policy = _policy_with_alts(_escalation_alt(lane="claude_cli", backend="archon_then_kodo"))
-    plan, _ = _engine().evaluate({}, "claude_cli", "kodo", policy)
+    policy = _policy_with_alts(_escalation_alt(lane="claude_cli", backend="dag_executor"))
+    plan, _ = _engine().evaluate({}, "claude_cli", "team_executor", policy)
     assert plan.candidates[0].lane == "claude_cli"
-    assert plan.candidates[0].backend == "archon_then_kodo"
+    assert plan.candidates[0].backend == "dag_executor"
 
 
 def test_escalation_capability_class_preserved():
     policy = _policy_with_alts(_escalation_alt(capability_class="workflow"))
-    plan, _ = _engine().evaluate({}, "claude_cli", "kodo", policy)
+    plan, _ = _engine().evaluate({}, "claude_cli", "team_executor", policy)
     assert plan.candidates[0].estimated_capability_class == CapabilityClass.WORKFLOW
 
 
 def test_empty_policy_gives_empty_plan():
     policy = _policy_with_alts()
-    plan, blocked = _engine().evaluate({}, "claude_cli", "kodo", policy)
+    plan, blocked = _engine().evaluate({}, "claude_cli", "team_executor", policy)
     assert plan.candidates == []
     assert blocked == []
 
@@ -80,7 +80,7 @@ def test_from_lanes_filters_non_matching_primary():
     alt = _escalation_alt(from_lanes=["aider_local"])
     policy = _policy_with_alts(alt)
     # Primary is claude_cli, not aider_local
-    plan, blocked = _engine().evaluate({}, "claude_cli", "kodo", policy)
+    plan, blocked = _engine().evaluate({}, "claude_cli", "team_executor", policy)
     assert plan.candidates == []
     assert blocked == []
 
@@ -93,17 +93,17 @@ def test_from_lanes_matches_primary():
 
 
 def test_from_backends_filters_non_matching():
-    alt = _escalation_alt(from_backends=["kodo"])
+    alt = _escalation_alt(from_backends=["team_executor"])
     policy = _policy_with_alts(alt)
-    # Primary backend is archon_then_kodo, not kodo
-    plan, _ = _engine().evaluate({}, "claude_cli", "archon_then_kodo", policy)
+    # Primary backend is dag_executor, not team_executor
+    plan, _ = _engine().evaluate({}, "claude_cli", "dag_executor", policy)
     assert plan.candidates == []
 
 
 def test_from_backends_matches():
-    alt = _escalation_alt(from_backends=["kodo"])
+    alt = _escalation_alt(from_backends=["team_executor"])
     policy = _policy_with_alts(alt)
-    plan, _ = _engine().evaluate({}, "claude_cli", "kodo", policy)
+    plan, _ = _engine().evaluate({}, "claude_cli", "team_executor", policy)
     assert len(plan.candidates) == 1
 
 
@@ -131,14 +131,14 @@ def test_medium_risk_triggers_escalation():
 def test_high_risk_triggers_escalation():
     alt = _escalation_alt(applies_when={"risk_level": "high"})
     policy = _policy_with_alts(alt)
-    plan, _ = _engine().evaluate({"risk_level": "high"}, "claude_cli", "kodo", policy)
+    plan, _ = _engine().evaluate({"risk_level": "high"}, "claude_cli", "team_executor", policy)
     assert len(plan.candidates) == 1
 
 
 def test_simple_task_type_does_not_trigger_workflow_escalation():
     alt = _escalation_alt(applies_when={"task_type": ["refactor", "feature"]})
     policy = _policy_with_alts(alt)
-    plan, blocked = _engine().evaluate({"task_type": "lint_fix"}, "claude_cli", "kodo", policy)
+    plan, blocked = _engine().evaluate({"task_type": "lint_fix"}, "claude_cli", "team_executor", policy)
     assert plan.candidates == []
     assert blocked == []
 
@@ -146,14 +146,14 @@ def test_simple_task_type_does_not_trigger_workflow_escalation():
 def test_refactor_triggers_workflow_escalation():
     alt = _escalation_alt(applies_when={"task_type": ["refactor", "feature"]})
     policy = _policy_with_alts(alt)
-    plan, _ = _engine().evaluate({"task_type": "refactor"}, "claude_cli", "kodo", policy)
+    plan, _ = _engine().evaluate({"task_type": "refactor"}, "claude_cli", "team_executor", policy)
     assert len(plan.candidates) == 1
 
 
 def test_feature_triggers_workflow_escalation():
     alt = _escalation_alt(applies_when={"task_type": ["refactor", "feature"]})
     policy = _policy_with_alts(alt)
-    plan, _ = _engine().evaluate({"task_type": "feature"}, "claude_cli", "kodo", policy)
+    plan, _ = _engine().evaluate({"task_type": "feature"}, "claude_cli", "team_executor", policy)
     assert len(plan.candidates) == 1
 
 
@@ -203,12 +203,12 @@ def test_constraint_block_distinct_from_not_warranted():
 
 
 def test_excluded_backend_blocks_escalation():
-    alt = _escalation_alt(backend="archon_then_kodo")
+    alt = _escalation_alt(backend="dag_executor")
     policy = LaneRoutingPolicy(
         alternative_routes=[alt],
-        excluded_backends=["archon_then_kodo"],
+        excluded_backends=["dag_executor"],
     )
-    plan, blocked = _engine().evaluate({}, "claude_cli", "kodo", policy)
+    plan, blocked = _engine().evaluate({}, "claude_cli", "team_executor", policy)
     assert plan.candidates == []
     assert len(blocked) == 1
     assert blocked[0].eligibility_status == EligibilityStatus.BLOCKED_BY_POLICY
@@ -220,9 +220,9 @@ def test_excluded_backend_blocks_escalation():
 
 
 def test_same_lane_backend_as_primary_skipped():
-    alt = _escalation_alt(lane="claude_cli", backend="kodo")
+    alt = _escalation_alt(lane="claude_cli", backend="team_executor")
     policy = _policy_with_alts(alt)
-    plan, blocked = _engine().evaluate({}, "claude_cli", "kodo", policy)
+    plan, blocked = _engine().evaluate({}, "claude_cli", "team_executor", policy)
     assert plan.candidates == []
     assert blocked == []
 
@@ -233,7 +233,7 @@ def test_same_lane_backend_as_primary_skipped():
 
 
 def test_reasoning_no_escalation_warranted():
-    plan, _ = _engine().evaluate({}, "claude_cli", "kodo", _policy_with_alts())
+    plan, _ = _engine().evaluate({}, "claude_cli", "team_executor", _policy_with_alts())
     assert "No escalation" in plan.reasoning
 
 
@@ -252,7 +252,7 @@ def test_reasoning_blocked_by_constraint():
 
 
 def test_default_policy_local_medium_risk_escalation():
-    """Local task with medium risk → escalation to claude_cli/kodo."""
+    """Local task with medium risk → escalation to claude_cli/team_executor."""
     plan, blocked = _engine().evaluate(
         {"risk_level": "medium", "task_type": "lint_fix"},
         "aider_local",
@@ -288,28 +288,28 @@ def test_default_policy_local_only_blocks_escalation():
     assert any(c.eligibility_status == EligibilityStatus.BLOCKED_BY_CONSTRAINT for c in blocked)
 
 
-def test_default_policy_refactor_kodo_to_workflow():
-    """Refactor task on kodo → workflow escalation available."""
+def test_default_policy_refactor_team_executor_to_workflow():
+    """Refactor task on team_executor → workflow escalation available."""
     plan, _ = _engine().evaluate(
         {"task_type": "refactor", "risk_level": "medium"},
         "claude_cli",
-        "kodo",
+        "team_executor",
         DEFAULT_POLICY,
         labels=[],
     )
-    assert any(c.backend == "archon_then_kodo" for c in plan.candidates)
+    assert any(c.backend == "dag_executor" for c in plan.candidates)
 
 
-def test_default_policy_feature_kodo_to_workflow():
-    """Feature task on kodo → workflow escalation available."""
+def test_default_policy_feature_team_executor_to_workflow():
+    """Feature task on team_executor → workflow escalation available."""
     plan, _ = _engine().evaluate(
         {"task_type": "feature", "risk_level": "medium"},
         "claude_cli",
-        "kodo",
+        "team_executor",
         DEFAULT_POLICY,
         labels=[],
     )
-    assert any(c.backend == "archon_then_kodo" for c in plan.candidates)
+    assert any(c.backend == "dag_executor" for c in plan.candidates)
 
 
 def test_default_policy_lint_fix_no_workflow_escalation():
@@ -317,20 +317,20 @@ def test_default_policy_lint_fix_no_workflow_escalation():
     plan, _ = _engine().evaluate(
         {"task_type": "lint_fix", "risk_level": "low"},
         "claude_cli",
-        "kodo",
+        "team_executor",
         DEFAULT_POLICY,
         labels=[],
     )
-    assert not any(c.backend == "archon_then_kodo" for c in plan.candidates)
+    assert not any(c.backend == "dag_executor" for c in plan.candidates)
 
 
-def test_default_policy_high_risk_kodo_to_workflow():
-    """High risk on kodo → workflow escalation available regardless of task type."""
+def test_default_policy_high_risk_team_executor_to_workflow():
+    """High risk on team_executor → workflow escalation available regardless of task type."""
     plan, _ = _engine().evaluate(
         {"task_type": "bug_fix", "risk_level": "high"},
         "claude_cli",
-        "kodo",
+        "team_executor",
         DEFAULT_POLICY,
         labels=[],
     )
-    assert any(c.backend == "archon_then_kodo" for c in plan.candidates)
+    assert any(c.backend == "dag_executor" for c in plan.candidates)

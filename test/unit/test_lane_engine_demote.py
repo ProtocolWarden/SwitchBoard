@@ -59,11 +59,11 @@ def _two_rule_policy() -> LaneRoutingPolicy:
                 name="fallback_premium",
                 priority=20,
                 select_lane="claude_cli",
-                select_backend="kodo",
+                select_backend="team_executor",
                 when={"task_type": "lint_fix"},
             ),
         ],
-        fallback=FallbackPolicy(lane="claude_cli", backend="kodo"),
+        fallback=FallbackPolicy(lane="claude_cli", backend="team_executor"),
     )
 
 
@@ -124,7 +124,7 @@ class TestPrimarySelectionDemote:
             adjustment_query=lambda lane: "demote",
         )
         decision = sel.select(_proposal())
-        # Fallback in _two_rule_policy is claude_cli/kodo
+        # Fallback in _two_rule_policy is claude_cli/team_executor
         assert decision.selected_lane.value == "claude_cli"
         assert decision.policy_rule_matched is None  # fallback rule_name maps to None
 
@@ -161,11 +161,11 @@ class TestRoutingPlanDemote:
                     name="primary_premium",
                     priority=10,
                     select_lane="claude_cli",
-                    select_backend="kodo",
+                    select_backend="team_executor",
                     when={"task_type": "lint_fix"},
                 ),
             ],
-            fallback=FallbackPolicy(lane="claude_cli", backend="kodo"),
+            fallback=FallbackPolicy(lane="claude_cli", backend="team_executor"),
             alternative_routes=[
                 {
                     "name": "local_fallback",

@@ -40,7 +40,7 @@
     },
     "expected": {
       "primary_lane": "claude_cli",
-      "primary_backend": "kodo"
+      "primary_backend": "team_executor"
     }
   },
   {
@@ -52,7 +52,7 @@
     },
     "expected": {
       "primary_lane": "claude_cli",
-      "primary_backend": "archon_then_kodo",
+      "primary_backend": "dag_executor",
       "has_escalations": false
     }
   },
@@ -65,9 +65,9 @@
     },
     "expected": {
       "primary_lane": "claude_cli",
-      "primary_backend": "kodo",
+      "primary_backend": "team_executor",
       "has_escalations": true,
-      "escalation_backend_available": "archon_then_kodo"
+      "escalation_backend_available": "dag_executor"
     }
   },
   {

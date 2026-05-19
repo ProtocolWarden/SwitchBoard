@@ -14,7 +14,7 @@ def _minimal(**kwargs) -> LaneDecision:
     defaults = dict(
         proposal_id="prop-1",
         selected_lane=LaneName.CLAUDE_CLI,
-        selected_backend=BackendName.ARCHON,
+        selected_backend=BackendName.DAG_EXECUTOR,
     )
     defaults.update(kwargs)
     return LaneDecision(**defaults)

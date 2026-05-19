@@ -20,7 +20,7 @@ dependencies = [
     "httpx>=0.27.0",
     "pyyaml>=6.0",
     "operations-center @ git+https://github.com/ProtocolWarden/OperationsCenter.git",
-    "cxrp @ git+https://github.com/ProtocolWarden/CxRP.git",
+    "cxrp @ git+https://github.com/ProtocolWarden/CxRP.git@v0.3.1",
 ]
 
 [project.optional-dependencies]

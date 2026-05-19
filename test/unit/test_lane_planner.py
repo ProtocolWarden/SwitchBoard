@@ -189,28 +189,28 @@ def test_high_risk_routes_to_premium():
     assert plan.primary.lane == "claude_cli"
 
 
-def test_high_risk_kodo_offers_workflow_escalation():
-    """High-risk task on kodo primary → workflow escalation recommended."""
+def test_high_risk_team_executor_offers_workflow_escalation():
+    """High-risk task on team_executor primary → workflow escalation recommended."""
     plan = _planner().plan(
         _proposal(task_type=TaskType.BUG_FIX, risk_level=RiskLevel.HIGH)
     )
-    assert any(c.backend == "archon_then_kodo" for c in plan.escalations.candidates)
+    assert any(c.backend == "dag_executor" for c in plan.escalations.candidates)
 
 
 def test_complex_refactor_routes_to_workflow_primary():
-    """Refactor + medium risk already routes to archon_then_kodo as primary (premium_structured rule)."""
+    """Refactor + medium risk already routes to dag_executor as primary (premium_structured rule)."""
     plan = _planner().plan(
         _proposal(task_type=TaskType.REFACTOR, risk_level=RiskLevel.MEDIUM)
     )
-    assert plan.primary.backend == "archon_then_kodo"
+    assert plan.primary.backend == "dag_executor"
 
 
 def test_feature_task_routes_to_workflow_primary():
-    """Feature + medium risk already routes to archon_then_kodo as primary (premium_structured rule)."""
+    """Feature + medium risk already routes to dag_executor as primary (premium_structured rule)."""
     plan = _planner().plan(
         _proposal(task_type=TaskType.FEATURE, risk_level=RiskLevel.MEDIUM)
     )
-    assert plan.primary.backend == "archon_then_kodo"
+    assert plan.primary.backend == "dag_executor"
 
 
 # ---------------------------------------------------------------------------
@@ -284,7 +284,7 @@ def test_lane_selector_plan_routes_primary_matches_select():
 def test_custom_policy_with_no_alternatives():
     policy = LaneRoutingPolicy(
         rules=[],
-        fallback=FallbackPolicy(lane="claude_cli", backend="kodo"),
+        fallback=FallbackPolicy(lane="claude_cli", backend="team_executor"),
         alternative_routes=[],
     )
     planner = DecisionPlanner(policy=policy)
@@ -301,23 +301,23 @@ def test_custom_policy_with_no_alternatives():
 
 
 def test_workflow_shaped_task_routes_to_workflow_primary():
-    """Refactor + high risk → already routes to archon_then_kodo as primary (premium_structured rule).
+    """Refactor + high risk → already routes to dag_executor as primary (premium_structured rule).
     No further escalation needed since the primary is already at workflow tier."""
     plan = _planner().plan(
         _proposal(task_type=TaskType.REFACTOR, risk_level=RiskLevel.HIGH)
     )
-    assert plan.primary.backend == "archon_then_kodo"
+    assert plan.primary.backend == "dag_executor"
 
 
 def test_high_risk_non_structured_task_escalates_to_workflow():
-    """bug_fix + high risk routes to kodo (high_risk_escalation rule), then escalation to workflow."""
+    """bug_fix + high risk routes to team_executor (high_risk_escalation rule), then escalation to workflow."""
     plan = _planner().plan(
         _proposal(task_type=TaskType.BUG_FIX, risk_level=RiskLevel.HIGH)
     )
-    assert plan.primary.backend == "kodo"
+    assert plan.primary.backend == "team_executor"
     workflow_escalations = [
         c for c in plan.escalations.candidates
-        if c.backend == "archon_then_kodo"
+        if c.backend == "dag_executor"
     ]
     assert len(workflow_escalations) >= 1
 

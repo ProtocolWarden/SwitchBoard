@@ -44,10 +44,10 @@ def test_find_by_request_id_returns_latest_match() -> None:
 def test_summarize_aggregates_lane_backend_rule_and_errors() -> None:
     logger = _logger(
         _record(selected_lane="aider_local", selected_backend="direct_local"),
-        _record(selected_lane="claude_cli", selected_backend="kodo"),
+        _record(selected_lane="claude_cli", selected_backend="team_executor"),
         _record(
             selected_lane="claude_cli",
-            selected_backend="kodo",
+            selected_backend="team_executor",
             status="error",
             error_category="internal_error",
             latency_ms=999.0,
@@ -59,7 +59,7 @@ def test_summarize_aggregates_lane_backend_rule_and_errors() -> None:
     assert stats.success_count == 2
     assert stats.error_count == 1
     assert stats.lane_counts == {"aider_local": 1, "claude_cli": 2}
-    assert stats.backend_counts == {"direct_local": 1, "kodo": 2}
+    assert stats.backend_counts == {"direct_local": 1, "team_executor": 2}
     assert stats.rule_counts == {"local_low_risk": 3}
     assert stats.error_category_counts == {"internal_error": 1}
     assert stats.latency_mean_ms == 10.0

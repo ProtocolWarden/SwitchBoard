@@ -7,9 +7,9 @@ This policy is used when no external config file is provided.
 It encodes the intended routing tendencies of the platform:
 
   low-risk, bounded, local-acceptable  → aider_local + direct_local
-  medium implementation work           → claude_cli + kodo
-  structured premium workflow          → claude_cli + archon_then_kodo
-  explicit premium task types          → claude_cli + kodo (fallback)
+  medium implementation work           → claude_cli + team_executor
+  structured premium workflow          → claude_cli + dag_executor
+  explicit premium task types          → claude_cli + team_executor (fallback)
 
 Rules are evaluated in ascending priority order (lower number = higher priority).
 """
@@ -66,13 +66,13 @@ DEFAULT_POLICY = LaneRoutingPolicy(
             name="medium_implementation",
             priority=30,
             select_lane="claude_cli",
-            select_backend="kodo",
+            select_backend="team_executor",
             when={
                 "task_type": ["bug_fix", "test_write", "dependency_update"],
                 "risk_level": ["low", "medium"],
             },
             confidence=0.90,
-            description="Medium implementation work; kodo execution under Claude CLI lane.",
+            description="Medium implementation work; team_executor execution under Claude CLI lane.",
         ),
 
         # ----------------------------------------------------------------
@@ -82,14 +82,14 @@ DEFAULT_POLICY = LaneRoutingPolicy(
             name="premium_structured",
             priority=40,
             select_lane="claude_cli",
-            select_backend="archon_then_kodo",
+            select_backend="dag_executor",
             when={
                 "task_type": ["refactor", "feature"],
                 "risk_level": ["medium", "high"],
             },
             confidence=0.85,
             description=(
-                "High-complexity structured task; Archon workflow wrapper over kodo execution."
+                "High-complexity structured task; Archon workflow wrapper over team_executor execution."
             ),
         ),
 
@@ -100,7 +100,7 @@ DEFAULT_POLICY = LaneRoutingPolicy(
             name="high_risk_escalation",
             priority=50,
             select_lane="claude_cli",
-            select_backend="kodo",
+            select_backend="team_executor",
             when={"risk_level": "high"},
             confidence=0.92,
             description="High-risk task escalated to premium lane regardless of type.",
@@ -125,20 +125,20 @@ DEFAULT_POLICY = LaneRoutingPolicy(
     ],
 
     backend_rules=[
-        # When codex_cli is selected and risk is low, prefer kodo over archon
+        # When codex_cli is selected and risk is low, prefer team_executor over dag_executor
         BackendRule(
-            name="codex_kodo_low_risk",
+            name="codex_team_executor_low_risk",
             lane="codex_cli",
-            select_backend="kodo",
+            select_backend="team_executor",
             when={"risk_level": ["low", "medium"]},
-            description="Prefer lightweight kodo execution for codex lane on low/medium risk.",
+            description="Prefer lightweight team_executor execution for codex lane on low/medium risk.",
         ),
     ],
 
     fallback=FallbackPolicy(
         lane="claude_cli",
-        backend="kodo",
-        rationale="Default fallback: no policy rule matched; using premium lane with kodo.",
+        backend="team_executor",
+        rationale="Default fallback: no policy rule matched; using premium lane with team_executor.",
     ),
 
     thresholds=DecisionThresholds(
@@ -158,7 +158,7 @@ DEFAULT_POLICY = LaneRoutingPolicy(
         AlternativeRoute(
             name="local_to_remote_fallback",
             lane="claude_cli",
-            backend="kodo",
+            backend="team_executor",
             role="fallback",
             cost_class="medium",
             capability_class="enhanced",
@@ -170,21 +170,21 @@ DEFAULT_POLICY = LaneRoutingPolicy(
             notes="Only use if local execution attempt has failed or is explicitly unavailable.",
         ),
 
-        # When primary is the archon_then_kodo workflow backend, fall back to
-        # plain kodo in the same lane (lighter, without workflow orchestration).
+        # When primary is the dag_executor workflow backend, fall back to
+        # plain team_executor in the same lane (lighter, without workflow orchestration).
         AlternativeRoute(
-            name="workflow_to_kodo_fallback",
+            name="workflow_to_team_executor_fallback",
             lane="claude_cli",
-            backend="kodo",
+            backend="team_executor",
             role="fallback",
             cost_class="medium",
             capability_class="enhanced",
             from_lanes=["claude_cli"],
-            from_backends=["archon_then_kodo"],
+            from_backends=["dag_executor"],
             blocked_by_labels=[],
             priority=10,
             confidence=0.80,
-            reason="Lightweight kodo execution if Archon workflow backend is unavailable.",
+            reason="Lightweight team_executor execution if Archon workflow backend is unavailable.",
         ),
 
         # ----------------------------------------------------------------
@@ -197,7 +197,7 @@ DEFAULT_POLICY = LaneRoutingPolicy(
         AlternativeRoute(
             name="local_to_premium_escalation",
             lane="claude_cli",
-            backend="kodo",
+            backend="team_executor",
             role="escalation",
             cost_class="medium",
             capability_class="enhanced",
@@ -212,18 +212,18 @@ DEFAULT_POLICY = LaneRoutingPolicy(
             ),
         ),
 
-        # kodo primary + refactor/feature task type → escalate to workflow backend.
+        # team_executor primary + refactor/feature task type → escalate to workflow backend.
         # Structured workflow orchestration adds validation discipline for complex changes.
         # Not offered for simple task types — cost must be justified.
         AlternativeRoute(
-            name="kodo_to_workflow_for_complex_task",
+            name="team_executor_to_workflow_for_complex_task",
             lane="claude_cli",
-            backend="archon_then_kodo",
+            backend="dag_executor",
             role="escalation",
             cost_class="high",
             capability_class="workflow",
             from_lanes=["claude_cli"],
-            from_backends=["kodo"],
+            from_backends=["team_executor"],
             applies_when={"task_type": ["refactor", "feature"]},
             blocked_by_labels=["local_only", "no_remote"],
             priority=10,
@@ -235,17 +235,17 @@ DEFAULT_POLICY = LaneRoutingPolicy(
             notes="Only warranted when task is a refactor or feature; not for simpler task types.",
         ),
 
-        # kodo primary + high risk → escalate to workflow backend.
+        # team_executor primary + high risk → escalate to workflow backend.
         # High-risk work benefits from workflow discipline regardless of task type.
         AlternativeRoute(
-            name="kodo_to_workflow_for_high_risk",
+            name="team_executor_to_workflow_for_high_risk",
             lane="claude_cli",
-            backend="archon_then_kodo",
+            backend="dag_executor",
             role="escalation",
             cost_class="high",
             capability_class="workflow",
             from_lanes=["claude_cli"],
-            from_backends=["kodo"],
+            from_backends=["team_executor"],
             applies_when={"risk_level": "high"},
             blocked_by_labels=["local_only", "no_remote"],
             priority=20,

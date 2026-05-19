@@ -15,7 +15,7 @@ def _record(profile: str = "capable", status: str = "success") -> DecisionRecord
     return DecisionRecord(
         timestamp="2024-01-01T00:00:00+00:00",
         selected_lane=profile,
-        selected_backend="kodo",
+        selected_backend="team_executor",
         rule_name="test",
         reason="test",
         status=status,

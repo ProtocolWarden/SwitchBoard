@@ -1,4 +1,6 @@
 
+- 2026-05-18 — ADR 0005 cutover: kodo/archon removed from BackendName; team_executor/dag_executor/critique_executor added. Routing defaults, escalation, cost/capability tables, cxrp_mapper, and all tests updated. CxRP pin bumped to v0.3.1. 341 tests passing.
+
 - Remove OC contracts dependency (2026-05-08, on fix/remove-oc-contracts-dependency): X2 surfaced that SB imported `LaneDecision`, `TaskProposal`, and routing enums from `operations_center.contracts` — a backwards dependency (OC routes_through SB, not the reverse). Fix: created `switchboard/contracts/` module owning `TaskProposal`, `LaneDecision`, `enums`, and supporting value objects. Wire format unchanged (same Pydantic field names). Updated 6 src files and 7 test files. 301 tests pass; X2: 0 findings.
 
 ## 2026-05-08 — Wire pre-commit hook
