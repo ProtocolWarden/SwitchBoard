@@ -81,9 +81,9 @@ dependencies = [
 ]
 
 [[package]]
-name = "executor-runtime"
+name = "core-runner"
 version = "0.1.0"
-source = { git = "https://github.com/ProtocolWarden/ExecutorRuntime.git#a23ac4c36c255f4a1698e0541b9aa471034b8ca8" }
+source = { git = "https://github.com/ProtocolWarden/CoreRunner.git#a23ac4c36c255f4a1698e0541b9aa471034b8ca8" }
 dependencies = [
     { name = "rxp" },
 ]
@@ -249,7 +249,7 @@ version = "0.1.0"
 source = { git = "https://github.com/ProtocolWarden/OperationsCenter.git#f41bc93196d5a1722b941e6c111948158ee93468" }
 dependencies = [
     { name = "cxrp" },
-    { name = "executor-runtime" },
+    { name = "core-runner" },
     { name = "httpx" },
     { name = "pydantic" },
     { name = "pyyaml" },
