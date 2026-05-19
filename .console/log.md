@@ -70,3 +70,10 @@ truth; pre-push catches regressions before they hit GitHub.
 
 - Fixed gitignore now exposes task.md, guidelines.md, backlog.md as trackable
 - These are source-of-truth session files; committing them into version control
+
+## 2026-05-19 — ADR 0005 Phase 5: LaneDecision metadata for worker_backend
+
+Added metadata: dict[str, str] to LaneDecision and wired engine.select() to always emit
+metadata["worker_backend"] based on selected_lane (codex_cli → "codex_cli", else "claude_code").
+Downstream OC adapters can read this to configure TeamExecutor/DAGExecutor/CritiqueExecutor
+without re-deriving backend from lane enum. 347 tests pass.

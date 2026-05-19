@@ -119,6 +119,10 @@ class LaneSelector:
             rule_name,
         )
 
+        metadata: dict[str, str] = {
+            "worker_backend": "codex_cli" if lane == "codex_cli" else "claude_code",
+        }
+
         return LaneDecision(
             proposal_id=proposal.proposal_id,
             selected_lane=LaneName(lane),
@@ -130,6 +134,7 @@ class LaneSelector:
                 LaneName(a) for a in alternatives if a in _KNOWN_LANES
             ],
             switchboard_version=_SWITCHBOARD_VERSION,
+            metadata=metadata,
         )
 
     def explain(self, proposal: TaskProposal) -> DecisionExplanation:
