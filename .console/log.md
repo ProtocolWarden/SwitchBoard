@@ -1,5 +1,10 @@
 
-- 2026-05-18 — K2 fix: docs/routing/lanes.md backend names updated to match new enum values (kodo→team_executor, archon_then_kodo→dag_executor).
+
+## 2026-05-21 — Add closing fence to console-context block
+
+Added <!-- /console-context --> end marker so OperatorConsole only replaces its
+managed block and leaves repo-owned content below it untouched.
+
 
 - 2026-05-18 — ADR 0005 cutover: kodo/archon removed from BackendName; team_executor/dag_executor/critique_executor added. Routing defaults, escalation, cost/capability tables, cxrp_mapper, and all tests updated. CxRP pin bumped to v0.3.1. 341 tests passing.
 
