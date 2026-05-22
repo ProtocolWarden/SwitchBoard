@@ -14,7 +14,7 @@ path.
 - **Accept** a `TaskProposal` from OperationsCenter
 - **Evaluate** routing factors from the proposal against the lane routing policy
 - **Select** a lane (`aider_local`, `claude_cli`, `codex_cli`)
-- **Select** a backend (`direct_local`, `kodo`, `archon_then_kodo`, `openclaw`)
+- **Select** a backend (`direct_local`, `team_executor`, `dag_executor`, `openclaw`)
 - **Produce** a `LaneDecision` carrying the selection, confidence, and rationale
 - **Explain** decisions in a concise, inspectable way (`LaneSelector.explain()`)
 - **Validate** the routing policy configuration (`LaneSelector.validate_policy()`)
@@ -29,9 +29,9 @@ path.
   PlatformDeployment-hosted capability. PlatformDeployment deploys the local model services;
   SwitchBoard only decides to use them.
 
-- **Not an execution layer.** Selecting `kodo` or `archon_then_kodo` means the lane
-  runner will invoke those backends. SwitchBoard does not know or implement kodo or
-  Archon execution semantics.
+- **Not an execution layer.** Selecting `team_executor` or `dag_executor` means the lane
+  runner will invoke those backends. SwitchBoard does not know or implement backend
+  execution semantics.
 
 - **Not a task proposer.** SwitchBoard does not generate, prioritise, or filter
   TaskProposals. That is OperationsCenter's responsibility.
@@ -100,8 +100,8 @@ ceiling comparisons (`low < medium < high`).
 | Backend | Description |
 |---------|-------------|
 | `direct_local` | Direct invocation without a runner wrapper (aider_local lane) |
-| `kodo` | kodo execution runner |
-| `archon_then_kodo` | Archon workflow wrapper over kodo execution |
+| `team_executor` | TeamExecutor execution runner |
+| `dag_executor` | DAGExecutor workflow-backed execution |
 | `openclaw` | OpenClaw backend (selectable when policy permits) |
 
 Backend selection is separate from lane selection. The lane determines the
@@ -140,9 +140,9 @@ LaneRoutingPolicy
 **BackendRule** — overrides backend selection within a named lane:
 
 ```yaml
-- name: codex_kodo_low_risk
+- name: codex_team_executor_low_risk
   lane: codex_cli
-  select_backend: kodo
+  select_backend: team_executor
   when:
     risk_level: [low, medium]
 ```
@@ -152,7 +152,7 @@ LaneRoutingPolicy
 ```yaml
 fallback:
   lane: claude_cli
-  backend: kodo
+  backend: team_executor
   rationale: "Default fallback: no policy rule matched"
 ```
 
@@ -164,7 +164,7 @@ This is the core architectural principle:
 
 > SwitchBoard tells the lane runner **what to use**. It does not do the work.
 
-After SwitchBoard returns a `LaneDecision`, the lane runner (e.g. kodo) uses
+After SwitchBoard returns a `LaneDecision`, the lane runner uses
 `LaneDecision.selected_lane` and `LaneDecision.selected_backend` to prepare an
 `ExecutionRequest` and invoke the appropriate adapter. SwitchBoard is not in
 that path.
@@ -173,7 +173,7 @@ that path.
 OperationsCenter → TaskProposal → SwitchBoard → LaneDecision
                                                   │
                                                   ▼
-                                           lane runner (kodo)
+                                           lane runner
                                                   │
                                          ExecutionRequest
                                                   │

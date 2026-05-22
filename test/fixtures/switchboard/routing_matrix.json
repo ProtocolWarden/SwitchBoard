@@ -57,7 +57,7 @@
     }
   },
   {
-    "_description": "High-risk bug fix \u2192 kodo primary with workflow escalation available",
+    "_description": "High-risk bug fix \u2192 team_executor primary with workflow escalation available",
     "proposal": {
       "task_type": "bug_fix",
       "risk_level": "high",

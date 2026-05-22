@@ -21,7 +21,7 @@ Execution lane
 
 SwitchBoard decides **how** a task runs. It does not decide **what** to work on
 (that is OperationsCenter's job) and it does not perform the coding (that is the
-backend's job — kodo, archon, openclaw, aider_local, etc., dispatched through
+backend's job — team_executor, dag_executor, openclaw, aider_local, etc., dispatched through
 CoreRunner).
 
 ---
@@ -53,7 +53,7 @@ CoreRunner).
   repo to observe, or what tasks to create. That is OperationsCenter's responsibility.
 
 - **Not the workflow harness.** SwitchBoard does not define or execute multi-step
-  coding workflows. That is Archon's responsibility.
+  coding workflows. That is DAGExecutor's responsibility.
 
 ---
 
@@ -213,13 +213,13 @@ plan = selector.plan_routes(proposal)        # same result
 Key design constraints:
 - `local_only` / `no_remote` labels **block** remote alternatives explicitly (not silently skip them)
 - Blocked-by-constraint is distinct from blocked-by-policy; execution layers need to know which is which
-- Escalation to `archon_then_kodo` requires positive justification — not offered merely because it exists
+- Escalation to `dag_executor` requires positive justification — not offered merely because it exists
 - SwitchBoard does not execute backends, run retries, or chain runs; it only expresses intent
 
 What SwitchBoard still does **not** own:
-- Backend execution (that is kodo's/Archon's job)
+- Backend execution (that is TeamExecutor's/DAGExecutor's job)
 - Retry orchestration (that is the lane runner's job)
-- Workflow step sequencing (that is Archon's job)
+- Workflow step sequencing (that is DAGExecutor's job)
 - Whether or when to act on a fallback/escalation (that is the execution layer's decision)
 
 See **[PlatformDeployment/docs/architecture/routing/routing-fallback-escalation.md](https://github.com/ProtocolWarden/PlatformDeployment/blob/main/docs/architecture/routing/routing-fallback-escalation.md)** for architecture and

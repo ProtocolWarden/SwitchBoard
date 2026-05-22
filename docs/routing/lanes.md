@@ -7,9 +7,9 @@ A **lane** is a named execution path that SwitchBoard selects based on task attr
 | Lane | Backend | Cost | Capability |
 |------|---------|------|------------|
 | `aider_local` | `aider_local` | Free | CPU-only Aider via local Ollama |
-| `claude_cli` | `team_executor` | Medium | Claude-powered Kodo executor |
-| `claude_cli` | `dag_executor` | High | Archon workflow + Kodo execution |
-| `codex_cli` | `team_executor` | Medium | Codex routing, Kodo execution |
+| `claude_cli` | `team_executor` | Medium | Claude-powered TeamExecutor |
+| `claude_cli` | `dag_executor` | High | DAGExecutor workflow-backed execution |
+| `codex_cli` | `team_executor` | Medium | Codex routing, TeamExecutor execution |
 
 ## aider_local
 
@@ -23,7 +23,7 @@ Default routing rules (from `switchboard/lane/defaults.py`):
 | 20 | `local_low_risk` | `task_type` ∈ {lint_fix, documentation, simple_edit} AND `max_risk_level=low` | `aider_local` |
 | 60 | `local_catchall` | `task_type` ∈ {lint_fix, documentation, simple_edit} | `aider_local` |
 
-**Fallback:** If Ollama is unavailable, alternatives include `claude_cli + kodo` (see `local_to_remote_fallback` in defaults).
+**Fallback:** If Ollama is unavailable, alternatives include `claude_cli + team_executor` (see `local_to_remote_fallback` in defaults).
 
 **Infrastructure:** Requires a running Ollama instance at `http://localhost:11434` with `qwen2.5-coder:3b` pulled. See [PlatformDeployment docs](../../../PlatformDeployment/docs/operations/local_aider_lane.md).
 
@@ -39,7 +39,7 @@ Default routing rules:
 | 40 | `premium_structured` | `task_type` ∈ {refactor, feature} AND risk ∈ {medium, high} | `dag_executor` |
 | 50 | `high_risk_escalation` | `risk_level=high` | `team_executor` |
 
-**Fallback (global):** `claude_cli + kodo` — used when no rule matches.
+**Fallback (global):** `claude_cli + team_executor` — used when no rule matches.
 
 ## Routing policy
 

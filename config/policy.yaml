@@ -26,7 +26,7 @@ rules:
   - name: medium_implementation
     priority: 30
     select_lane: claude_cli
-    select_backend: kodo
+    select_backend: team_executor
     when:
       task_type:
         - bug_fix
@@ -41,7 +41,7 @@ rules:
   - name: premium_structured
     priority: 40
     select_lane: claude_cli
-    select_backend: archon_then_kodo
+    select_backend: dag_executor
     when:
       task_type:
         - refactor
@@ -55,7 +55,7 @@ rules:
   - name: high_risk_escalation
     priority: 50
     select_lane: claude_cli
-    select_backend: kodo
+    select_backend: team_executor
     when:
       risk_level: high
     confidence: 0.92
@@ -74,18 +74,18 @@ rules:
     description: Local-eligible work prefers the local lane when constraints allow it.
 
 backend_rules:
-  - name: codex_kodo_low_risk
+  - name: codex_team_executor_low_risk
     lane: codex_cli
-    select_backend: kodo
+    select_backend: team_executor
     when:
       risk_level:
         - low
         - medium
-    description: Prefer lightweight kodo execution for codex lane on low or medium risk.
+    description: Prefer lightweight team_executor execution for codex lane on low or medium risk.
 
 fallback:
   lane: claude_cli
-  backend: kodo
+  backend: team_executor
   rationale: Default fallback when no lane rule matches.
 
 thresholds:
@@ -97,7 +97,7 @@ excluded_backends: []
 alternative_routes:
   - name: local_to_remote_fallback
     lane: claude_cli
-    backend: kodo
+    backend: team_executor
     role: fallback
     cost_class: medium
     capability_class: enhanced
@@ -111,24 +111,24 @@ alternative_routes:
     reason: Premium lane fallback when local execution is unavailable or insufficient.
     notes: Only use after a local execution attempt fails or is unavailable.
 
-  - name: workflow_to_kodo_fallback
+  - name: workflow_to_team_executor_fallback
     lane: claude_cli
-    backend: kodo
+    backend: team_executor
     role: fallback
     cost_class: medium
     capability_class: enhanced
     from_lanes:
       - claude_cli
     from_backends:
-      - archon_then_kodo
+      - dag_executor
     blocked_by_labels: []
     priority: 10
     confidence: 0.8
-    reason: Lightweight kodo execution if the workflow backend is unavailable.
+    reason: Lightweight team_executor execution if the workflow backend is unavailable.
 
   - name: local_to_premium_escalation
     lane: claude_cli
-    backend: kodo
+    backend: team_executor
     role: escalation
     cost_class: medium
     capability_class: enhanced
@@ -145,16 +145,16 @@ alternative_routes:
     confidence: 0.9
     reason: Higher risk warrants escalation to a premium lane.
 
-  - name: kodo_to_workflow_for_complex_task
+  - name: team_executor_to_workflow_for_complex_task
     lane: claude_cli
-    backend: archon_then_kodo
+    backend: dag_executor
     role: escalation
     cost_class: high
     capability_class: workflow
     from_lanes:
       - claude_cli
     from_backends:
-      - kodo
+      - team_executor
     applies_when:
       task_type:
         - refactor
@@ -167,16 +167,16 @@ alternative_routes:
     reason: Complex structural change benefits from a workflow-backed execution path.
     notes: Only warranted for refactor or feature work.
 
-  - name: kodo_to_workflow_for_high_risk
+  - name: team_executor_to_workflow_for_high_risk
     lane: claude_cli
-    backend: archon_then_kodo
+    backend: dag_executor
     role: escalation
     cost_class: high
     capability_class: workflow
     from_lanes:
       - claude_cli
     from_backends:
-      - kodo
+      - team_executor
     applies_when:
       risk_level: high
     blocked_by_labels:

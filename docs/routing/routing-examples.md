@@ -41,7 +41,7 @@ execution. Zero marginal API cost.
 
 ---
 
-## Example 2 — medium implementation task → `kodo`
+## Example 2 — medium implementation task → `team_executor`
 
 **Proposal:**
 ```json
@@ -64,19 +64,19 @@ Condition: risk_level IN [low, medium] → ✓
 ```json
 {
   "selected_lane": "claude_cli",
-  "selected_backend": "kodo",
+  "selected_backend": "team_executor",
   "confidence": 0.90,
   "policy_rule_matched": "medium_implementation",
-  "rationale": "task_type=bug_fix, risk_level=medium → lane=claude_cli, backend=kodo [rule: medium_implementation]"
+  "rationale": "task_type=bug_fix, risk_level=medium → lane=claude_cli, backend=team_executor [rule: medium_implementation]"
 }
 ```
 
-**Why claude_cli + kodo:** Bug fixes at medium risk require a capable model.
-kodo provides execution support without Archon overhead.
+**Why claude_cli + team_executor:** Bug fixes at medium risk require a capable model.
+TeamExecutor provides execution support with lightweight overhead.
 
 ---
 
-## Example 3 — structured premium workflow → `archon_then_kodo`
+## Example 3 — structured premium workflow → `dag_executor`
 
 **Proposal:**
 ```json
@@ -99,15 +99,15 @@ Condition: risk_level IN [medium, high] → ✓
 ```json
 {
   "selected_lane": "claude_cli",
-  "selected_backend": "archon_then_kodo",
+  "selected_backend": "dag_executor",
   "confidence": 0.85,
   "policy_rule_matched": "premium_structured",
-  "rationale": "task_type=refactor, risk_level=high → lane=claude_cli, backend=archon_then_kodo [rule: premium_structured]"
+  "rationale": "task_type=refactor, risk_level=high → lane=claude_cli, backend=dag_executor [rule: premium_structured]"
 }
 ```
 
-**Why archon_then_kodo:** High-risk refactor benefits from Archon's structured
-workflow wrapper over raw kodo execution — multi-step planning, validation gates.
+**Why dag_executor:** High-risk refactor benefits from DAGExecutor's structured
+workflow orchestration — multi-step planning, validation gates.
 
 ---
 
@@ -152,10 +152,10 @@ No rule matched → fallback
 ```json
 {
   "selected_lane": "claude_cli",
-  "selected_backend": "kodo",
+  "selected_backend": "team_executor",
   "confidence": 0.7,
   "policy_rule_matched": null,
-  "rationale": "Default fallback: no policy rule matched; using premium lane with kodo."
+  "rationale": "Default fallback: no policy rule matched; using premium lane with team_executor."
 }
 ```
 
@@ -217,10 +217,10 @@ No rule in the default policy matches `task_type=unknown`.
 ```json
 {
   "selected_lane": "claude_cli",
-  "selected_backend": "kodo",
+  "selected_backend": "team_executor",
   "confidence": 0.7,
   "policy_rule_matched": null,
-  "rationale": "Default fallback: no policy rule matched; using premium lane with kodo."
+  "rationale": "Default fallback: no policy rule matched; using premium lane with team_executor."
 }
 ```
 
@@ -260,11 +260,11 @@ The full default routing tendencies can be summarised as:
 | Task type | Risk level | → Lane | → Backend |
 |-----------|-----------|--------|-----------|
 | lint_fix, documentation, simple_edit | low | aider_local | direct_local |
-| bug_fix, test_write, dependency_update | low, medium | claude_cli | kodo |
-| refactor, feature | medium, high | claude_cli | archon_then_kodo |
-| any | high | claude_cli | kodo (escalation) |
+| bug_fix, test_write, dependency_update | low, medium | claude_cli | team_executor |
+| refactor, feature | medium, high | claude_cli | dag_executor |
+| any | high | claude_cli | team_executor (escalation) |
 | (any with local_only label) | any | aider_local | direct_local |
-| (no match) | any | claude_cli | kodo (fallback) |
+| (no match) | any | claude_cli | team_executor (fallback) |
 
 These are policy tendencies. Rules are evaluated in priority order and the
 first match wins. Custom policy files can alter any of these tendencies.
