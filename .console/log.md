@@ -1,5 +1,13 @@
 
 
+## 2026-06-04 — Reconcile: enable R1/R2 enforcement
+
+Repo's tracked .console/docs verified scrub-target-clean (git grep empty) and
+log.md under the 400-line R1 budget. Set `audit.reconcile_enforce: true` in
+.custodian/config.yaml. `cl reconcile check` GREEN; custodian audit shows R1=0,
+R2=0 findings. Enforce-only pass — no prune needed (already under budget).
+
+
 ## 2026-05-21 — Add closing fence to console-context block
 
 Added <!-- /console-context --> end marker so OperatorConsole only replaces its
