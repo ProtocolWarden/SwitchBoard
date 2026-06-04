@@ -29,28 +29,21 @@ jobs:
           fi
 
       - name: Materialize boundary artifact file
+        # Decode the boundary disclosure artifact from the base64 CONTENT secret
+        # REPOGRAPH_BOUNDARY_ARTIFACT_B64 (the older *_FILE path secret cannot resolve
+        # on a CI runner). Graceful: skip if absent (B2 flags it if required).
         env:
-          REPOGRAPH_BOUNDARY_ARTIFACT_FILE: ${{ secrets.REPOGRAPH_BOUNDARY_ARTIFACT_FILE }}
+          REPOGRAPH_BOUNDARY_ARTIFACT_B64: ${{ secrets.REPOGRAPH_BOUNDARY_ARTIFACT_B64 }}
         run: |
-          if [ -z "${REPOGRAPH_BOUNDARY_ARTIFACT_FILE:-}" ]; then
-            echo "Missing REPOGRAPH_BOUNDARY_ARTIFACT_FILE secret" >&2
-            exit 1
+          if [ -z "${REPOGRAPH_BOUNDARY_ARTIFACT_B64:-}" ]; then
+            echo "REPOGRAPH_BOUNDARY_ARTIFACT_B64 not set — skipping (B2 flags if required)."
+            exit 0
           fi
-          if [ ! -f "$REPOGRAPH_BOUNDARY_ARTIFACT_FILE" ]; then
-            echo "Boundary artifact file not found at $REPOGRAPH_BOUNDARY_ARTIFACT_FILE" >&2
-            exit 1
-          fi
-          python - <<'PY'
-          import json
-          import os
-          from pathlib import Path
-
-          p = Path(os.environ["REPOGRAPH_BOUNDARY_ARTIFACT_FILE"])
-          data = json.loads(p.read_text(encoding="utf-8"))
-          print(f"boundary_provenance={data.get('source_graph_id')}@{data.get('source_ref_or_commit')}")
-          PY
-          echo "REPOGRAPH_BOUNDARY_ARTIFACT_FILE=$REPOGRAPH_BOUNDARY_ARTIFACT_FILE" >> "$GITHUB_ENV"
+          dest="$(mktemp "${RUNNER_TEMP:-/tmp}/repograph-boundary-XXXXXX.json")"
+          printf '%s' "$REPOGRAPH_BOUNDARY_ARTIFACT_B64" | base64 -d > "$dest"
+          echo "REPOGRAPH_BOUNDARY_ARTIFACT_FILE=$dest" >> "$GITHUB_ENV"
 
       - name: Run Custodian audit
         run: |
+          git config core.hooksPath .hooks
           custodian-multi --repos . --fail-on-findings --no-color
