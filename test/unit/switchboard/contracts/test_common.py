@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import pytest
+from pydantic import ValidationError
 
 from switchboard.contracts.common import (
     BranchPolicy,
@@ -22,7 +23,7 @@ class TestTaskTarget:
 
     def test_frozen(self) -> None:
         t = TaskTarget(repo_key="r", clone_url="u", base_branch="main")
-        with pytest.raises(Exception):
+        with pytest.raises(ValidationError):
             t.repo_key = "changed"  # type: ignore[misc]
 
     def test_allowed_paths(self) -> None:
@@ -44,11 +45,11 @@ class TestExecutionConstraints:
 
     def test_frozen(self) -> None:
         ec = ExecutionConstraints()
-        with pytest.raises(Exception):
+        with pytest.raises(ValidationError):
             ec.timeout_seconds = 999  # type: ignore[misc]
 
     def test_timeout_minimum(self) -> None:
-        with pytest.raises(Exception):
+        with pytest.raises(ValidationError):
             ExecutionConstraints(timeout_seconds=0)
 
 
@@ -64,7 +65,7 @@ class TestValidationProfile:
 
     def test_frozen(self) -> None:
         vp = ValidationProfile(profile_name="x")
-        with pytest.raises(Exception):
+        with pytest.raises(ValidationError):
             vp.profile_name = "y"  # type: ignore[misc]
 
 
@@ -81,5 +82,5 @@ class TestBranchPolicy:
 
     def test_frozen(self) -> None:
         bp = BranchPolicy()
-        with pytest.raises(Exception):
+        with pytest.raises(ValidationError):
             bp.open_pr = True  # type: ignore[misc]

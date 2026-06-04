@@ -9,6 +9,12 @@ tests_root: test
 audit:
   # This repo's .console/ is reconciled + clean; flip R1/R2 to enforce.
   reconcile_enforce: true
+  # `reconcile_enforce` is consumed by the reconcile (R1/R2) detector but is
+  # absent from custodian-doctor's built-in known-audit-key list, so it must be
+  # declared here to avoid a spurious "unknown audit key" doctor warning under
+  # --strict. (Does not disable any check; the key remains active.)
+  plugin_audit_keys:
+    - reconcile_enforce
 
   cross_repo:
     platform_manifest_repo: ../PlatformManifest

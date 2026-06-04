@@ -12,7 +12,6 @@ from switchboard.contracts.enums import (
     RiskLevel,
     TaskType,
 )
-
 from switchboard.lane.engine import LaneSelector
 from switchboard.lane.policy import (
     FallbackPolicy,

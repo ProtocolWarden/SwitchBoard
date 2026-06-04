@@ -4,10 +4,9 @@
 
 from __future__ import annotations
 
-from switchboard.contracts import LaneDecision, TaskProposal
+from switchboard.contracts import TaskProposal
 from switchboard.contracts.common import TaskTarget
 from switchboard.contracts.enums import (
-    BackendName,
     ExecutionMode,
     LaneName,
     Priority,
@@ -94,7 +93,7 @@ def test_lane_decision_metadata_is_dict():
 
 def test_default_policy_decisions_always_have_worker_backend():
     selector = LaneSelector()
-    from switchboard.contracts.enums import TaskType, RiskLevel
+    from switchboard.contracts.enums import RiskLevel, TaskType
     for task_type in [TaskType.BUG_FIX, TaskType.FEATURE, TaskType.LINT_FIX, TaskType.REFACTOR]:
         proposal = _proposal(task_type=task_type, risk_level=RiskLevel.LOW)
         decision = selector.select(proposal)

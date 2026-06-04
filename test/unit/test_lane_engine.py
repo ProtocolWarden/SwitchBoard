@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import pytest
+
 from switchboard.contracts import LaneDecision, TaskProposal
 from switchboard.contracts.common import (
     TaskTarget,
@@ -17,7 +18,6 @@ from switchboard.contracts.enums import (
     RiskLevel,
     TaskType,
 )
-
 from switchboard.lane.defaults import DEFAULT_POLICY
 from switchboard.lane.engine import LaneSelector, _proposal_attrs
 from switchboard.lane.policy import (

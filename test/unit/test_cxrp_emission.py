@@ -16,10 +16,10 @@ import pytest
 from cxrp.contracts import LaneDecision as CxrpLaneDecision
 from cxrp.validation.json_schema import validate_contract
 from cxrp.vocabulary.lane import LaneType
-from switchboard.contracts import LaneDecision as SbLaneDecision
-from switchboard.contracts.enums import BackendName, LaneName
 
 from switchboard.adapters.cxrp_mapper import to_cxrp_lane_decision
+from switchboard.contracts import LaneDecision as SbLaneDecision
+from switchboard.contracts.enums import BackendName, LaneName
 
 
 def _serialize_for_schema(decision: CxrpLaneDecision) -> dict:

@@ -9,7 +9,6 @@ from switchboard.contracts.common import (
     TaskTarget,
 )
 from switchboard.contracts.enums import ExecutionMode, Priority, RiskLevel, TaskType
-
 from switchboard.lane.planner import DecisionPlanner
 from switchboard.lane.policy import FallbackPolicy, LaneRoutingPolicy
 from switchboard.lane.routing import EligibilityStatus, RoutingPlan
