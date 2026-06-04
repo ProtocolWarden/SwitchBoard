@@ -14,7 +14,6 @@ from switchboard.contracts.enums import (
     RiskLevel,
     TaskType,
 )
-
 from switchboard.lane.defaults import DEFAULT_POLICY
 from switchboard.lane.engine import LaneSelector
 

@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import pytest
+from pydantic import ValidationError
 
 from switchboard.contracts.common import TaskTarget
 from switchboard.contracts.enums import ExecutionMode, Priority, RiskLevel, TaskType
@@ -58,7 +59,7 @@ def test_custom_priority_and_risk() -> None:
 
 def test_frozen() -> None:
     p = _minimal()
-    with pytest.raises(Exception):
+    with pytest.raises(ValidationError):
         p.goal_text = "changed"  # type: ignore[misc]
 
 

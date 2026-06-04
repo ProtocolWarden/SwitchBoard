@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import pytest
+from pydantic import ValidationError
 
 from switchboard.contracts.enums import BackendName, LaneName
 from switchboard.contracts.routing import LaneDecision
@@ -39,15 +40,15 @@ def test_defaults() -> None:
 
 def test_confidence_bounds() -> None:
     assert _minimal(confidence=0.75).confidence == 0.75
-    with pytest.raises(Exception):
+    with pytest.raises(ValidationError):
         _minimal(confidence=1.1)
-    with pytest.raises(Exception):
+    with pytest.raises(ValidationError):
         _minimal(confidence=-0.1)
 
 
 def test_frozen() -> None:
     d = _minimal()
-    with pytest.raises(Exception):
+    with pytest.raises(ValidationError):
         d.confidence = 0.5  # type: ignore[misc]
 
 
