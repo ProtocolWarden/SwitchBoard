@@ -7,6 +7,9 @@ tests_root: test
 # `_custodian/` overlay layer (see OperationsCenter for a worked example).
 
 audit:
+  # This repo's .console/ is reconciled + clean; flip R1/R2 to enforce.
+  reconcile_enforce: true
+
   cross_repo:
     platform_manifest_repo: ../PlatformManifest
 
