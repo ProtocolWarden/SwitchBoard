@@ -74,6 +74,18 @@ class TestAdjustmentEngineDemote:
         assert adj.action == "demote"
         assert "latency" in adj.reason
 
+    def test_demotes_on_bad_tail_latency_even_with_low_mean(self) -> None:
+        # 90 fast requests + 10 very slow ones: the mean stays well under the
+        # threshold but the p95 tail is far over it. Gating on p95 (not mean)
+        # catches tail degradation the mean would have hidden.
+        latencies = [100.0] * 90 + [20_000.0] * 10
+        sig = _sig(total=100, latencies=latencies)
+        assert sig.mean_latency_ms is not None and sig.mean_latency_ms < _DEMOTE_LATENCY_MS
+        assert sig.p95_latency_ms is not None and sig.p95_latency_ms >= _DEMOTE_LATENCY_MS
+        adj = self.engine._evaluate(sig)
+        assert adj.action == "demote"
+        assert "p95 latency" in adj.reason
+
     def test_error_rate_takes_priority_over_latency(self) -> None:
         errors = int(_DEMOTE_MIN_REQUESTS * _DEMOTE_ERROR_RATE) + 1
         sig = _sig(

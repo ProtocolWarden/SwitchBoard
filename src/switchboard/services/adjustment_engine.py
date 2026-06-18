@@ -57,14 +57,20 @@ class AdjustmentEngine:
                         f"exceeds threshold ({_DEMOTE_ERROR_RATE:.0%})"
                     ),
                 )
-            mean_lat = sig.mean_latency_ms
-            if mean_lat is not None and mean_lat >= _DEMOTE_LATENCY_MS:
+            # Gate on p95 (tail) latency, not the mean: a backend whose typical
+            # request is fast but whose slow tail is consistently bad still
+            # degrades the user experience, and the mean hides that. Mean is
+            # reported alongside for operator context.
+            p95_lat = sig.p95_latency_ms
+            if p95_lat is not None and p95_lat >= _DEMOTE_LATENCY_MS:
+                mean_lat = sig.mean_latency_ms
+                mean_note = f", mean {mean_lat:.0f} ms" if mean_lat is not None else ""
                 return PolicyAdjustment(
                     profile=sig.profile,
                     action="demote",
                     reason=(
-                        f"mean latency {mean_lat:.0f} ms over {sig.total_requests} requests "
-                        f"exceeds threshold ({_DEMOTE_LATENCY_MS:.0f} ms)"
+                        f"p95 latency {p95_lat:.0f} ms{mean_note} over {sig.total_requests} "
+                        f"requests exceeds threshold ({_DEMOTE_LATENCY_MS:.0f} ms)"
                     ),
                 )
 

@@ -90,3 +90,18 @@ Added metadata: dict[str, str] to LaneDecision and wired engine.select() to alwa
 metadata["worker_backend"] based on selected_lane (codex_cli → "codex_cli", else "claude_code").
 Downstream OC adapters can read this to configure TeamExecutor/DAGExecutor/CritiqueExecutor
 without re-deriving backend from lane enum. 347 tests pass.
+
+## 2026-06-18 — wire p95 into demote heuristic; drop plan_routes + p50
+
+Ecosystem incomplete-integration remediation (combined, coupled change):
+- WIRE: AdjustmentEngine._evaluate now gates the latency-demote on p95 (tail)
+  latency instead of mean — a backend with a fast typical request but a bad slow
+  tail still degrades UX, and the mean hid that. mean is reported alongside for
+  operator context (stays used). New test: low-mean/high-p95 tail now demotes.
+- DELETE LaneSelector.plan_routes — redundant wrapper; prod constructs
+  DecisionPlanner.plan directly (app.py / routes_routing.py). Reworked the
+  RoutingPlanDemote tests to call DecisionPlanner.plan; deleted the dedicated
+  delegation tests. Removed the now-unused RoutingPlan import.
+- DELETE ProfileSignals.p50_latency_ms — computed but read nowhere (p95 is the
+  signal now). Removed its tests + the unused `median` import.
+345 tests green; ruff(src+test) + ty + docs + audit(B2 env only) + doctor clean.

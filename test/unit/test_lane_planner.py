@@ -255,27 +255,6 @@ def test_policy_summary_mentions_blocked_when_present():
 
 
 # ---------------------------------------------------------------------------
-# LaneSelector.plan_routes() delegation
-# ---------------------------------------------------------------------------
-
-
-def test_lane_selector_plan_routes_returns_routing_plan():
-    from switchboard.lane.engine import LaneSelector
-    selector = LaneSelector()
-    plan = selector.plan_routes(_proposal())
-    assert isinstance(plan, RoutingPlan)
-
-
-def test_lane_selector_plan_routes_primary_matches_select():
-    from switchboard.lane.engine import LaneSelector
-    selector = LaneSelector()
-    proposal = _proposal(task_type=TaskType.LINT_FIX, risk_level=RiskLevel.LOW)
-    decision = selector.select(proposal)
-    plan = selector.plan_routes(proposal)
-    assert plan.primary.lane == decision.selected_lane.value
-
-
-# ---------------------------------------------------------------------------
 # Custom policy
 # ---------------------------------------------------------------------------
 
