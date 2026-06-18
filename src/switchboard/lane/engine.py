@@ -38,7 +38,6 @@ from switchboard.contracts.enums import (
 from .defaults import DEFAULT_POLICY
 from .explain import DecisionExplanation, DecisionFactor
 from .policy import LaneRoutingPolicy
-from .routing import RoutingPlan
 
 logger = logging.getLogger(__name__)
 
@@ -159,20 +158,6 @@ class LaneSelector:
             fallback_recommendation=self._policy.fallback.lane if not fallback_used else None,
             summary=summary,
         )
-
-    def plan_routes(self, proposal: TaskProposal) -> RoutingPlan:
-        """Return a full RoutingPlan including fallback and escalation alternatives.
-
-        Delegates to DecisionPlanner, which uses the same policy as this selector.
-        Use this when callers need the complete picture of available alternatives,
-        not just the primary route.
-        """
-        from .planner import DecisionPlanner
-        planner = DecisionPlanner(
-            policy=self._policy,
-            adjustment_query=self._adjustment_query,
-        )
-        return planner.plan(proposal)
 
     def validate_policy(self) -> list[str]:
         """Return a list of policy validation issues (empty = valid).

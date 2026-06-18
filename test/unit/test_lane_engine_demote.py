@@ -13,6 +13,7 @@ from switchboard.contracts.enums import (
     TaskType,
 )
 from switchboard.lane.engine import LaneSelector
+from switchboard.lane.planner import DecisionPlanner
 from switchboard.lane.policy import (
     FallbackPolicy,
     LaneRoutingPolicy,
@@ -146,8 +147,8 @@ class TestPrimarySelectionDemote:
 class TestRoutingPlanDemote:
     def test_no_query_no_deprioritized(self):
         """Without a query, no candidate gets DEPRIORITIZED via this path."""
-        sel = LaneSelector(policy=_two_rule_policy())
-        plan = sel.plan_routes(_proposal())
+        planner = DecisionPlanner(policy=_two_rule_policy())
+        plan = planner.plan(_proposal())
         for cand in plan.fallbacks.candidates + plan.escalations.candidates:
             assert cand.eligibility_status != EligibilityStatus.DEPRIORITIZED or "[health-demoted]" not in (cand.reason or "")
 
@@ -178,11 +179,11 @@ class TestRoutingPlanDemote:
 
         # Demote aider_local — it should still appear but as DEPRIORITIZED
         demoted = {"aider_local"}
-        sel = LaneSelector(
+        planner = DecisionPlanner(
             policy=policy,
             adjustment_query=lambda lane: "demote" if lane in demoted else "neutral",
         )
-        plan = sel.plan_routes(_proposal())
+        plan = planner.plan(_proposal())
 
         # Find the aider_local fallback candidate
         aider_candidates = [c for c in plan.fallbacks.candidates if c.lane == "aider_local"]

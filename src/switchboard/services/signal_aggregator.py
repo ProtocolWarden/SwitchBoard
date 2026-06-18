@@ -5,7 +5,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from statistics import mean, median
+from statistics import mean
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -32,12 +32,6 @@ class ProfileSignals:
         if not self._latencies_ms:
             return None
         return mean(self._latencies_ms)
-
-    @property
-    def p50_latency_ms(self) -> float | None:
-        if not self._latencies_ms:
-            return None
-        return median(sorted(self._latencies_ms))
 
     @property
     def p95_latency_ms(self) -> float | None:

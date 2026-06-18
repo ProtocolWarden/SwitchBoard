@@ -48,19 +48,15 @@ class TestProfileSignals:
         sig = ProfileSignals(profile="fast", _latencies_ms=[100.0, 200.0, 300.0])
         assert sig.mean_latency_ms == pytest.approx(200.0)
 
-    def test_p50_latency(self) -> None:
-        sig = ProfileSignals(profile="fast", _latencies_ms=[100.0, 200.0, 300.0])
-        assert sig.p50_latency_ms == pytest.approx(200.0)
-
     def test_p95_latency(self) -> None:
         latencies = list(range(1, 101))  # 1..100
         sig = ProfileSignals(profile="fast", _latencies_ms=[float(x) for x in latencies])
         # p95 index = max(0, int(100 * 0.95) - 1) = max(0, 94) = index 94 → value 95
         assert sig.p95_latency_ms == pytest.approx(95.0)
 
-    def test_p50_none_when_no_latencies(self) -> None:
+    def test_p95_none_when_no_latencies(self) -> None:
         sig = ProfileSignals(profile="fast")
-        assert sig.p50_latency_ms is None
+        assert sig.p95_latency_ms is None
 
 
 # ---------------------------------------------------------------------------
